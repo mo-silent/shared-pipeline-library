@@ -9,7 +9,7 @@ metadata:
 spec:
   securityContext:
     fsGroup: 1000
-  serviceAccountName: jenkins-sa
+  serviceAccountName: jenkins
   tolerations:
   - effect: NoSchedule
     key: devops-spot
