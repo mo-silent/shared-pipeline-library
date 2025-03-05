@@ -9,17 +9,20 @@ def call(body) {
         stages  {
             stage("get_evn") {
                 steps {
-                    // sh 'docker ps'
-                    // echo "${env.all}"
-                    def branchName = scm.branches[0].name
-                    if (branchName.contains("*/")) {
-                        branchName = branchName.split("\\*/")[1]
-                    }
+                    script {
+                        // sh 'docker ps'
+                        // echo "${env.all}"
+                        def branchName = scm.branches[0].name
+                        if (branchName.contains("*/")) {
+                            branchName = branchName.split("\\*/")[1]
+                        }
                         echo "分支名称: ${branchName}"
+                        
+                        def changedFiles = getChangedFiles()
+                        def modifiedDirs = changedFiles.collect { it.split('/')[0] }.unique()
+                        echo "修改的一级目录: ${modifiedDirs}"
                     }
-                    def changedFiles = getChangedFiles()
-                    def modifiedDirs = changedFiles.collect { it.split('/')[0] }.unique()
-                    echo "修改的一级目录: ${modifiedDirs}"
+                }
             }
             stage("Build for AMD64 platform") {
               agent {
