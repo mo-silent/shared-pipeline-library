@@ -21,6 +21,9 @@ def call(body) {
                         def changedFiles = getChangedFiles()
                         def modifiedDirs = changedFiles.collect { it.split('/')[0] }.unique()
                         echo "修改的一级目录: ${modifiedDirs}"
+                        sh """
+                            echo ***INFO：当前目录是 `pwd` && echo ***INFO：列出target目录文件 && ls -lha
+                        """
                     }
                 }
             }
