@@ -7,7 +7,7 @@ def call(body) {
                 steps {
                     script {
                         // 通过 params.payload 访问变量
-                        echo "GitHub Event Payload: $all"
+                        echo "GitHub Event Payload"
                     }
                 }
             }
