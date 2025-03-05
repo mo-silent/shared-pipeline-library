@@ -6,12 +6,19 @@ def call(body) {
                 yaml podtemlateCI()
             }
         }
-        stages {
-            stage('Handle Webhook') {
+        stages  {
+            stage("Docker PS") {
                 steps {
-                    script {
-                        // 通过 params.payload 访问变量
-                        echo "GitHub Event Payload"
+                    sh 'docker ps'
+                }
+            }
+            stage("sleep") {
+                steps {
+                    script{
+                        sleep(1800) {
+                            // on interrupt do
+                            echo "hello"
+                        }
                     }
                 }
             }
