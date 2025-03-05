@@ -1,7 +1,11 @@
 #!groovy
 def call(body) {
     pipeline {
-        agent any
+        agent {
+            kubernetes {
+                yaml podtemlateCI()
+            }
+        }
         stages {
             stage('Handle Webhook') {
                 steps {
