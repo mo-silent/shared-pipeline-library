@@ -16,7 +16,7 @@ def call(body) {
             stage("Build for AMD64 platform") {
               agent {
                 kubernetes {
-                    yamlFile 'Jenkins-kaniko-amd64.yaml'
+                    yaml Kanikotemplate()
                 }
               }
               steps {
