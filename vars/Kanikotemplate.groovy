@@ -3,8 +3,9 @@ def call() {
 apiVersion: v1
 kind: Pod
 metadata:
-  name: kaniko
-  namespace: devops-tools
+  namespace: jenkins-slave
+  labels:
+    role: slave
 spec:
   securityContext:
     fsGroup: 1000
