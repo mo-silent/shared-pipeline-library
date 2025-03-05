@@ -9,7 +9,7 @@ def call(body) {
         stages  {
             stage("Docker PS") {
                 steps {
-                    sh 'docker ps'
+                    // sh 'docker ps'
                     sh 'sleep 1800'
                 }
             }
