@@ -24,6 +24,8 @@ def call(body) {
                         sh """
                             echo ***INFO：当前目录是 `pwd` && echo ***INFO：列出target目录文件 && ls -lha
                         """
+                        sh 'mkdir -p dist && echo "Build output" > dist/output.txt'
+                        stash includes: 'dist/**', name: 'dist-stash'
                     }
                 }
             }
@@ -36,6 +38,8 @@ def call(body) {
               steps {
                 container('kaniko') {
                     echo 'Building the Docker image'
+                    unstash 'dist-stash'
+                    sh 'cat dist/output.txt'
                     // sh 'sleep 18000'
                     // sh '/kaniko/executor --context `pwd` --dockerfile `pwd`/Dockerfile --destination 617482875210.dkr.ecr.us-east-1.amazonaws.com/java-demo:202310-02-amd64'
                 }
