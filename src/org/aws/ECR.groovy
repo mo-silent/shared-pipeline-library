@@ -16,7 +16,8 @@ import com.amazonaws.services.securitytoken.AWSSecurityTokenService
 
 def createRepository(String region, String repoName, roleArn) {    
     // sts assumeRole
-    AssumeRoleRequest assumeRole = new AssumeRoleRequest().withRoleArn(roleArn).withRoleSessionName("io-klerch-mp3-converter");
+    println "***INFO：Assume Role ${roleArn}."
+    AssumeRoleRequest assumeRole = new AssumeRoleRequest().withRoleArn(roleArn).withRoleSessionName("jenkins-slave-login-ecr");
 
     AWSSecurityTokenService sts = AWSSecurityTokenServiceClientBuilder.standard().withRegion(region).build();
     credentials = sts.assumeRole(assumeRole).getCredentials();

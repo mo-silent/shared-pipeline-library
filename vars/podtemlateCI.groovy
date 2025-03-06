@@ -10,7 +10,7 @@ spec:
   serviceAccountName: jenkins
   containers:
   - name: jnlp
-    image: docker.io/mochen2020/devops:jenkins-slave-v1
+    image: docker.io/mochen2020/devops:jenkins-slave-v2
     volumeMounts:
     - mountPath: "/var/run/docker.sock"
       name: "volume-0"
