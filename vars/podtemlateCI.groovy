@@ -7,6 +7,7 @@ metadata:
   labels:
     role: slave
 spec:
+  serviceAccountName: jenkins
   containers:
   - name: jnlp
     image: docker.io/mochen2020/devops:jenkins-slave-v1

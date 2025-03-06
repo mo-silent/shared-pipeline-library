@@ -42,12 +42,13 @@ def call(body) {
                         // stash includes: 'dist/**', name: 'dist-stash'
                         echo "当前的config 信息: ${config}"
                         echo "当前构建github token: ${env.GIT_API_TOKEN}"
-                        withCredentials([string(credentialsId: 'bad48883-feb9-4c4f-9978-35868144aad4', variable: 'GIT_API_TOKEN')]) {
+                        @SuppressCredentialsInterceptors
+                        withCredentials([string(credentialsId: '18dad1df-6d1a-44dc-bb65-ee08922fa9d7', variable: 'GIT_API_TOKEN')]) {
                             echo "Using credentials for Git"
                             sh 'echo $GIT_API_TOKEN'  // 确保变量已正确赋值
                         }
                         if (config.GROUP_NAME) {
-                            String region = registryUrl.tokenize('.')[-3].toLowerCase()
+                            String region = env.DOCKER_REGISTRY_HOST_TOKYO.tokenize('.')[-3].toLowerCase()
                             ECR.createRepository(env.DOCKER_REGISTRY_HOST_TOKYO, config.GROUP_NAME, env.ROLE_ARN)
                         }
                         if (config.GIT_REPO) {
