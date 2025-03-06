@@ -50,8 +50,8 @@ def createRepository(String region, String repoName, String roleArn) {
                 credentials.getSessionToken());
 
         ecrClient = AmazonECRClientBuilder.standard()
-                .withCredentials(new AWSStaticCredentialsProvider(sessionCredentials))
                 .withRegion(region)
+                .withCredentials(new AWSStaticCredentialsProvider(sessionCredentials))
                 .build()
     } else {
         println "***INFO: AWS ECR Region: ${region}"
@@ -64,6 +64,7 @@ def createRepository(String region, String repoName, String roleArn) {
     GetAuthorizationTokenRequest request = new GetAuthorizationTokenRequest()
     println "***INFO: AWS ECR Getting Authorization Token."
     GetAuthorizationTokenResult response = ecrClient.getAuthorizationToken(request)
+    println "***INFO: response."
     //println response.getAuthorizationData()
     token = response.getAuthorizationData().get(0).getAuthorizationToken()
     println "***INFO: AWS ECR Token: ${token}"
