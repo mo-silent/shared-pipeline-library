@@ -34,7 +34,6 @@ def createRepository(String region, String repoName, String roleArn) {
         .roleArn(sa_roleArn)
         .roleSessionName("jenkins-session")
         .webIdentityTokenFile(tokenFile)
-        .withRegion(region)
         .build()
     if (roleArn) {
         // sts assumeRole
@@ -54,8 +53,9 @@ def createRepository(String region, String repoName, String roleArn) {
                 .withRegion(region)
                 .build()
     } else {
+        println "***INFO: AWS ECR Region: ${region}"
         ecrClient = AmazonECRClientBuilder.standard()
-            .withRegion(region)
+            .withRegion("us-west-2")
             .withCredentials(credentialsProvider)  // 使用 WebIdentityTokenCredentialsProvider
             .build()
     }
@@ -65,6 +65,7 @@ def createRepository(String region, String repoName, String roleArn) {
     GetAuthorizationTokenResult response = ecrClient.getAuthorizationToken(request)
     //println response.getAuthorizationData()
     token = response.getAuthorizationData().get(0).getAuthorizationToken()
+    println "***INFO: AWS ECR Token: ${token}"
     String[] ecrCreds = new String(token.decodeBase64(), 'UTF-8').split(':')
     result = java.util.Arrays.asList(ecrCreds)
     
