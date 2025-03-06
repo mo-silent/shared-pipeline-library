@@ -1,5 +1,6 @@
 #!groovy
 package org.aws
+// aws sdk v2
 import software.amazon.awssdk.auth.credentials.AwsSessionCredentials
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.regions.Region
