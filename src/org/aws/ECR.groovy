@@ -17,6 +17,8 @@ import com.amazonaws.services.securitytoken.AWSSecurityTokenService
 
 
 def createRepository(String region, String repoName, String roleArn) {    
+    println "***INFO: AWS ECR Creating Repository ${repoName}."
+    println "***INFO: AWS ECR Region: ${region}"
     AmazonECRClient ecrClient
     // String sa_roleArn = System.getenv("AWS_ROLE_ARN")
     // String tokenFile = System.getenv("AWS_WEB_IDENTITY_TOKEN_FILE")

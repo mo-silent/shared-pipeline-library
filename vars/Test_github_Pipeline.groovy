@@ -50,7 +50,7 @@ def call(body) {
                         echo "当前构建github token: ${test}"
                         if (config.GROUP_NAME) {
                             String region = env.DOCKER_REGISTRY_HOST_TOKYO.tokenize('.')[-3].toLowerCase()
-                            ECR.createRepository(env.DOCKER_REGISTRY_HOST_TOKYO, config.GROUP_NAME, null)
+                            ECR.createRepository(region, config.GROUP_NAME, null)
                         }
                         if (config.GIT_REPO) {
                             tools.checkoutSource(config.GIT_REPO, "main", env.GIT_CREDENTIAL_ID)
