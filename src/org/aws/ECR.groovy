@@ -1,6 +1,7 @@
 #!groovy
 package org.aws
 // import com.amazonaws.auth.BasicAWSCredentials
+import com.amazonaws.auth.WebIdentityTokenCredentialsProvider
 import com.amazonaws.auth.BasicSessionCredentials
 import com.amazonaws.auth.AWSStaticCredentialsProvider
 import com.amazonaws.services.ecr.AmazonECRClient
