@@ -42,15 +42,14 @@ def call(body) {
                         // sh 'mkdir -p dist && echo "Build output" > dist/output.txt'
                         // stash includes: 'dist/**', name: 'dist-stash'
                         echo "当前的config 信息: ${config}"
-                        echo "当前构建github token: ${env.GIT_API_TOKEN}"
                         // @SuppressCredentialsInterceptors
                         test = credentials('18dad1df-6d1a-44dc-bb65-ee08922fa9d7')
                         sh "env |grep AWS_"
                         // sh "sleep 180"
                         echo "当前构建github token: ${test}"
-                        sh 'sudo apt-get update'
-                        sh 'sudo apt-get install -y python3.12 python3.12-dev'
-                        sh 'sudo ln -sf /usr/lib/python3.12/libpython3.12.so.1.0 /usr/local/bin/libpython3.12.so.1.0 || echo "Link already exists"'
+                        sh 'apt-get update'
+                        sh 'apt-get install -y python3.12 python3.12-dev'
+                        sh 'ln -sf /usr/lib/python3.12/libpython3.12.so.1.0 /usr/local/bin/libpython3.12.so.1.0 || echo "Link already exists"'
                         sh 'python3.12 --version'
                         sh 'aws --version'
                         sh 'aws ecr get-login-password --region us-west-2 > token.txt'
