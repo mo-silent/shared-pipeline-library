@@ -34,6 +34,7 @@ def createRepository(String region, String repoName, String roleArn) {
         .roleArn(sa_roleArn)
         .roleSessionName("jenkins-session")
         .webIdentityTokenFile(tokenFile)
+        .withRegion(region)
         .build()
     if (roleArn) {
         // sts assumeRole
