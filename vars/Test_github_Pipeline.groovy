@@ -1,5 +1,6 @@
 #!groovy
 import org.*
+import org.jenkinsci.plugins.credentialsbinding.impl.SuppressCredentialsInterceptors
 
 def call(body) {
     def config = [:]
@@ -45,7 +46,7 @@ def call(body) {
                         @SuppressCredentialsInterceptors
                         withCredentials([string(credentialsId: '18dad1df-6d1a-44dc-bb65-ee08922fa9d7', variable: 'GIT_API_TOKEN')]) {
                             echo "Using credentials for Git"
-                            sh 'echo $GIT_API_TOKEN'  // 确保变量已正确赋值
+                            sh 'echo $GIT_API_TOKEN'  // 输出明文（仅限调试！）
                         }
                         if (config.GROUP_NAME) {
                             String region = env.DOCKER_REGISTRY_HOST_TOKYO.tokenize('.')[-3].toLowerCase()
