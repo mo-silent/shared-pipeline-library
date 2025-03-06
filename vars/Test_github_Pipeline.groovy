@@ -47,10 +47,6 @@ def call(body) {
                         sh "env |grep AWS_"
                         // sh "sleep 180"
                         echo "当前构建github token: ${test}"
-                        sh 'apt-get update'
-                        sh 'apt-get install -y python3.12 python3.12-dev'
-                        sh 'ln -sf /usr/lib/python3.12/libpython3.12.so.1.0 /usr/local/bin/libpython3.12.so.1.0 || echo "Link already exists"'
-                        sh 'python3.12 --version'
                         sh 'aws --version'
                         sh 'aws ecr get-login-password --region us-west-2 > token.txt'
                         sh 'cat token.txt'
