@@ -14,23 +14,31 @@ import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder
 import com.amazonaws.services.securitytoken.AWSSecurityTokenService
 
 
-def createRepository(String region, String repoName, roleArn) {    
-    // sts assumeRole
-    println "***INFO：Assume Role ${roleArn}."
-    AssumeRoleRequest assumeRole = new AssumeRoleRequest().withRoleArn(roleArn).withRoleSessionName("jenkins-slave-login-ecr");
+def createRepository(String region, String repoName, String roleArn) {    
+    AmazonECRClient ecrClient
+    if (roleArn) {
+        // sts assumeRole
+        println "***INFO：Assume Role ${roleArn}"
+        AssumeRoleRequest assumeRole = new AssumeRoleRequest().withRoleArn(roleArn).withRoleSessionName("jenkins-slave-login-ecr");
 
-    AWSSecurityTokenService sts = AWSSecurityTokenServiceClientBuilder.standard().withRegion(region).build();
-    credentials = sts.assumeRole(assumeRole).getCredentials();
+        AWSSecurityTokenService sts = AWSSecurityTokenServiceClientBuilder.standard().withRegion(region).build();
+        credentials = sts.assumeRole(assumeRole).getCredentials();
 
-    BasicSessionCredentials sessionCredentials = new BasicSessionCredentials(
-            credentials.getAccessKeyId(),
-            credentials.getSecretAccessKey(),
-            credentials.getSessionToken());
+        BasicSessionCredentials sessionCredentials = new BasicSessionCredentials(
+                credentials.getAccessKeyId(),
+                credentials.getSecretAccessKey(),
+                credentials.getSessionToken());
 
-    AmazonECRClient ecrClient = AmazonECRClientBuilder.standard()
-            .withCredentials(new AWSStaticCredentialsProvider(sessionCredentials))
-            .withRegion(region)
-            .build()
+        ecrClient = AmazonECRClientBuilder.standard()
+                .withCredentials(new AWSStaticCredentialsProvider(sessionCredentials))
+                .withRegion(region)
+                .build()
+    } else {
+        println "***INFO：Using IRSA credentials"
+        ecrClient = AmazonECRClientBuilder.standard()
+                .withRegion(region)
+                .build()
+    }
 
     GetAuthorizationTokenRequest request = new GetAuthorizationTokenRequest()
     GetAuthorizationTokenResult response = ecrClient.getAuthorizationToken(request)
