@@ -42,7 +42,7 @@ def call(body) {
                         // stash includes: 'dist/**', name: 'dist-stash'
                         echo "当前的config 信息: ${config}"
                         echo "当前构建github token: ${env.GIT_API_TOKEN}"
-                        withCredentials([string(credentialsId: 'github-silent-pwd', variable: 'GIT_API_TOKEN')]) {
+                        withCredentials([string(credentialsId: 'bad48883-feb9-4c4f-9978-35868144aad4', variable: 'GIT_API_TOKEN')]) {
                             echo "Using credentials for Git"
                             sh 'echo $GIT_API_TOKEN'  // 确保变量已正确赋值
                         }
