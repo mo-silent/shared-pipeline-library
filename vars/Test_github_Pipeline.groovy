@@ -20,7 +20,7 @@ def call(body) {
             DOCKER_REGISTRY_HOST_TOKYO = "329599658616.dkr.ecr.us-west-2.amazonaws.com"
             ROLE_ARN = "arn:aws:iam::329599658616:role/jenkins_slave"
             GIT_CREDENTIAL_ID = 'test_silent'
-            // GIT_API_TOKEN = credentials('test_silent')
+            GIT_API_TOKEN = credentials('test_silent')
         }
         stages  {
             stage("get_evn") {
@@ -47,12 +47,12 @@ def call(body) {
                         // sh 'cat token.txt'
                         if (config.GROUP_NAME) {
                             String region = env.DOCKER_REGISTRY_HOST_TOKYO.tokenize('.')[-3].toLowerCase()
-                            withEnv(['AWS_REGION=us-west-2']) {
-                                ECR.createRepository(region, config.GROUP_NAME, null)
-                            }
+                            
+                            // ECR.createRepository(region, config.GROUP_NAME, null)
                         }
                         if (config.GIT_REPO) {
-                            tools.checkoutSource(config.GIT_REPO, "main", env.GIT_CREDENTIAL_ID)
+                            println "token: ${env.GIT_API_TOKEN}"
+                            // tools.checkoutSource(config.GIT_REPO, "main", env.GIT_CREDENTIAL_ID)
                         }
                     }
                 }
