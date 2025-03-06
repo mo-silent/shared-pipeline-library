@@ -42,14 +42,9 @@ def call(body) {
                         // sh 'mkdir -p dist && echo "Build output" > dist/output.txt'
                         // stash includes: 'dist/**', name: 'dist-stash'
                         echo "当前的config 信息: ${config}"
-                        // @SuppressCredentialsInterceptors
-                        test = credentials('18dad1df-6d1a-44dc-bb65-ee08922fa9d7')
-                        sh "env |grep AWS_"
-                        // sh "sleep 180"
-                        echo "当前构建github token: ${test}"
-                        sh 'aws --version'
-                        sh 'aws ecr get-login-password --region us-west-2 > token.txt'
-                        sh 'cat token.txt'
+                        // sh 'aws --version'
+                        // sh 'aws ecr get-login-password --region us-west-2 > token.txt'
+                        // sh 'cat token.txt'
                         if (config.GROUP_NAME) {
                             String region = env.DOCKER_REGISTRY_HOST_TOKYO.tokenize('.')[-3].toLowerCase()
                             withEnv(['AWS_REGION=us-west-2']) {
