@@ -18,12 +18,15 @@ import com.amazonaws.services.securitytoken.AWSSecurityTokenService
 
 def createRepository(String region, String repoName, String roleArn) {    
     AmazonECRClient ecrClient
-    String sa_roleArn = System.getenv("AWS_ROLE_ARN")
-    String tokenFile = System.getenv("AWS_WEB_IDENTITY_TOKEN_FILE")
+    // String sa_roleArn = System.getenv("AWS_ROLE_ARN")
+    // String tokenFile = System.getenv("AWS_WEB_IDENTITY_TOKEN_FILE")
+    def sa_roleArn = sh(script: 'echo $AWS_ROLE_ARN', returnStdout: true).trim()
+    def tokenFile = sh(script: 'echo $AWS_WEB_IDENTITY_TOKEN_FILE', returnStdout: true).trim()
     if (!sa_roleArn || !tokenFile) {
         throw new Exception("IRSA 环境变量未正确配置: AWS_ROLE_ARN 或 AWS_WEB_IDENTITY_TOKEN_FILE 缺失")
     }
-    println "***INFO: Using IRSA credentials"
+    println "***INFO: Using IRSA credentials: ${sa_roleArn}"
+    println "***INFO: Using IRSA token file: ${tokenFile}"
     // 显式配置 WebIdentityTokenCredentialsProvider
     WebIdentityTokenCredentialsProvider credentialsProvider = new WebIdentityTokenCredentialsProvider(
         sa_roleArn,

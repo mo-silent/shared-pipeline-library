@@ -45,6 +45,7 @@ def call(body) {
                         echo "当前构建github token: ${env.GIT_API_TOKEN}"
                         // @SuppressCredentialsInterceptors
                         test = credentials('18dad1df-6d1a-44dc-bb65-ee08922fa9d7')
+                        sh "env |grep AWS_"
                         sh "sleep 180"
                         echo "当前构建github token: ${test}"
                         if (config.GROUP_NAME) {
