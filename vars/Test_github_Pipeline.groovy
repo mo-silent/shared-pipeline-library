@@ -19,14 +19,12 @@ def call(body) {
             DOCKER_REGISTRY_HOST_TOKYO = "329599658616.dkr.ecr.us-west-2.amazonaws.com"
             ROLE_ARN = "arn:aws:iam::329599658616:role/jenkins_slave"
             GIT_CREDENTIAL_ID = 'test_silent'
-            GIT_API_TOKEN = credentials ('test_silent')
+            // GIT_API_TOKEN = credentials('test_silent')
         }
         stages  {
             stage("get_evn") {
                 steps {
                     script {
-                        // sh 'docker ps'
-                        // echo "${env.all}"
                         // def branchName = scm.branches[0].name
                         // if (branchName.contains("*/")) {
                         //     branchName = branchName.split("\\*/")[1]
@@ -39,10 +37,15 @@ def call(body) {
                         // sh """
                         //     echo ***INFO：当前目录是 `pwd` && echo ***INFO：列出target目录文件 && ls -lha
                         // """
-                        echo "当前构建github token: ${env.GIT_API_TOKEN}"
+
                         // sh 'mkdir -p dist && echo "Build output" > dist/output.txt'
                         // stash includes: 'dist/**', name: 'dist-stash'
                         echo "当前的config 信息: ${config}"
+                        echo "当前构建github token: ${env.GIT_API_TOKEN}"
+                        withCredentials([string(credentialsId: 'test_silent', variable: 'GIT_API_TOKEN')]) {
+                            echo "Using credentials for Git"
+                            sh 'echo $GIT_API_TOKEN'  // 确保变量已正确赋值
+                        }
                         if (config.GROUP_NAME) {
                             String region = registryUrl.tokenize('.')[-3].toLowerCase()
                             ECR.createRepository(env.DOCKER_REGISTRY_HOST_TOKYO, config.GROUP_NAME, env.ROLE_ARN)
