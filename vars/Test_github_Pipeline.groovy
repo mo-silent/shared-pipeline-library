@@ -23,6 +23,17 @@ def call(body) {
             // GIT_API_TOKEN = credentials('test_silent')
         }
         stages  {
+            stage('Install Python') {
+                sh 'sudo apt-get update'
+                sh 'sudo apt-get install -y python3.12 python3.12-dev'
+                sh 'sudo ln -sf /usr/lib/python3.12/libpython3.12.so.1.0 /usr/local/bin/libpython3.12.so.1.0 || echo "Link already exists"'
+                sh 'python3.12 --version'
+            }
+            stage('Test AWS CLI') {
+                sh 'aws --version'
+                sh 'aws ecr get-login-password --region us-west-2 > token.txt'
+                sh 'cat token.txt'
+            }
             stage("get_evn") {
                 steps {
                     script {
