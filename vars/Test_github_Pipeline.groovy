@@ -46,7 +46,7 @@ def call(body) {
                         // @SuppressCredentialsInterceptors
                         test = credentials('18dad1df-6d1a-44dc-bb65-ee08922fa9d7')
                         sh "env |grep AWS_"
-                        sh "sleep 180"
+                        // sh "sleep 180"
                         echo "当前构建github token: ${test}"
                         if (config.GROUP_NAME) {
                             String region = env.DOCKER_REGISTRY_HOST_TOKYO.tokenize('.')[-3].toLowerCase()
