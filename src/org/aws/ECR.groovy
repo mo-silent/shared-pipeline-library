@@ -28,7 +28,7 @@ def createRepository(String region, String repoName, String roleArn) {
     println "***INFO: Using IRSA credentials: ${sa_roleArn}"
     println "***INFO: Using IRSA token file: ${tokenFile}"
     // 显式配置 WebIdentityTokenCredentialsProvider
-    WebIdentityTokenCredentialsProvider credentialsProvider = new WebIdentityTokenCredentialsProvider.builder()
+    WebIdentityTokenCredentialsProvider credentialsProvider = WebIdentityTokenCredentialsProvider.builder()
         .roleArn(sa_roleArn)
         .roleSessionName("jenkins-session")
         .webIdentityTokenFile(tokenFile)
