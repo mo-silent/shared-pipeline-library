@@ -6,8 +6,6 @@ metadata:
   namespace: jenkins-slave
   labels:
     role: slave
-  annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::329599658616:role/jenkins_slave
 spec:
   serviceAccountName: jenkins
   containers:
@@ -23,12 +21,6 @@ spec:
     env:
     - name: "JENKINS_AGENT_WORKDIR"
       value: "/tmp"
-    - name: AWS_ROLE_ARN
-      value: "arn:aws:iam::329599658616:role/jenkins_slave"
-    - name: AWS_WEB_IDENTITY_TOKEN_FILE
-      value: "/var/run/secrets/eks.amazonaws.com/serviceaccount/token"
-    - name: AWS_ROLE_SESSION_NAME
-      value: "jenkins-slave-pod"
     imagePullPolicy: Always
   tolerations:
   - effect: NoSchedule

@@ -45,6 +45,7 @@ def call(body) {
                         echo "当前构建github token: ${env.GIT_API_TOKEN}"
                         // @SuppressCredentialsInterceptors
                         test = credentials('18dad1df-6d1a-44dc-bb65-ee08922fa9d7')
+                        sh "sleep 1800"
                         echo "当前构建github token: ${test}"
                         if (config.GROUP_NAME) {
                             String region = env.DOCKER_REGISTRY_HOST_TOKYO.tokenize('.')[-3].toLowerCase()
