@@ -39,14 +39,15 @@ def createRepository(String region, String repoName, String roleArn) {
                 .withRegion(region)
                 .build()
     }
-
+    println "***INFO：AWS ECR Client: ${ecrClient}"
     GetAuthorizationTokenRequest request = new GetAuthorizationTokenRequest()
+    println "***INFO：AWS ECR Getting Authorization Token."
     GetAuthorizationTokenResult response = ecrClient.getAuthorizationToken(request)
     //println response.getAuthorizationData()
     token = response.getAuthorizationData().get(0).getAuthorizationToken()
     String[] ecrCreds = new String(token.decodeBase64(), 'UTF-8').split(':')
     result = java.util.Arrays.asList(ecrCreds)
-
+    println "***INFO：AWS ECR Authorization Token: ${result}"
     CreateRepositoryRequest createRequest = new CreateRepositoryRequest().withRepositoryName(repoName)
     //println (createRequest)
     try {
