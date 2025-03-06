@@ -1,5 +1,6 @@
 #!groovy
 package org
+import org.*
 import java.util.regex.*
 
 // Git代码迁出
