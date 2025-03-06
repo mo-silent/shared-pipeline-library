@@ -14,6 +14,7 @@ import com.amazonaws.services.ecr.model.GetAuthorizationTokenResult
 import com.amazonaws.services.securitytoken.model.AssumeRoleRequest
 import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder
 import com.amazonaws.services.securitytoken.AWSSecurityTokenService
+import com.amazonaws.regions.Regions
 
 
 def createRepository(String region, String repoName, String roleArn) {    
@@ -55,7 +56,7 @@ def createRepository(String region, String repoName, String roleArn) {
     } else {
         println "***INFO: AWS ECR Region: ${region}"
         ecrClient = AmazonECRClientBuilder.standard()
-            .withRegion("us-west-2")
+            .withRegion(Regions.fromName("us-west-2"))
             .withCredentials(credentialsProvider)  // 使用 WebIdentityTokenCredentialsProvider
             .build()
     }
