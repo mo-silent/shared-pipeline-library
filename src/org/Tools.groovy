@@ -17,7 +17,7 @@ def checkoutSource( String repoUrl, String branch, String gitCredentialsId ){
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
         '''
-
+        sh "pwd && ls -l"
         checkout([
             $class: 'GitSCM',
             branches: [[name: branch]],  // 分支名称
