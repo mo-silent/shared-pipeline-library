@@ -19,7 +19,7 @@ def call(body) {
         environment {
             DOCKER_REGISTRY_HOST_TOKYO = "329599658616.dkr.ecr.us-west-2.amazonaws.com"
             ROLE_ARN = "arn:aws:iam::329599658616:role/jenkins_slave"
-            GIT_CREDENTIAL_ID = 'test_silent'
+            GIT_CREDENTIAL_ID = 'plaud_silent'
         }
         stages  {
             stage("get_evn") {
