@@ -16,7 +16,6 @@ def checkoutSource( String repoUrl, String branch, String gitCredentialsId ){
             cp $SSH_KEY_FILE ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
-            echo $SSH_KEY_FILE
         '''
 
         checkout([
