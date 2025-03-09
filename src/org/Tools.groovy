@@ -21,7 +21,7 @@ def checkoutSource( String repoUrl, String branch, String gitCredentialsId ){
         checkout([
             $class: 'GitSCM',
             branches: [[name: branch]],  // 分支名称
-            extensions: [],
+            extensions: [[$class: 'CheckoutOption', timeout: 30], [$class: 'CleanBeforeCheckout', deleteUntrackedNestedRepositories: true],  [$class: 'RelativeTargetDirectory', relativeTargetDir: getRepoName(repoUrl)]],
             userRemoteConfigs: [[
                 url: repoUrl,  // Git 仓库的 HTTPS URL
                 credentialsId: gitCredentialsId  // 凭证的 ID
@@ -40,4 +40,13 @@ def checkoutSource( String repoUrl, String branch, String gitCredentialsId ){
     
 
     
+}
+
+def getRepoName(String repoUrl) {
+    // 去掉 URL 末尾的 .git（如果存在）
+    if (repoUrl.endsWith('.git')) {
+        repoUrl = repoUrl.substring(0, repoUrl.length() - 4)
+    }
+    // 提取最后一个 / 之后的部分
+    return repoUrl.substring(repoUrl.lastIndexOf('/') + 1)
 }
