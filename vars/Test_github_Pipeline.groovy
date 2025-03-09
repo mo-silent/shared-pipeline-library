@@ -58,6 +58,18 @@ def call(body) {
                     
                 }
             }
+            stage("Create ECR Repository") {
+                when {
+                    equals expected: "true",
+                    actual: METADATA.IS_DOCKER
+                }
+                steps {
+                    script{
+                        String region = env.DOCKER_REGISTRY_HOST_TOKYO.tokenize('.')[-3].toLowerCase()
+                        ECR.createRepository(region, METADATA.GROUP_NAME, null)
+                    }
+                }
+            }
             stage("Build Docker images") {
                 when {
                     equals expected: "true", 
@@ -69,10 +81,6 @@ def call(body) {
                     }
                 }
                 steps {
-                    script{
-                        String region = env.DOCKER_REGISTRY_HOST_TOKYO.tokenize('.')[-3].toLowerCase()
-                        ECR.createRepository(region, METADATA.GROUP_NAME, null)
-                    }
                     container('kaniko') {
                         echo 'Building the Docker image'
                         unstash 'web-dist'
