@@ -61,7 +61,11 @@ def build(Map METADATA) {
             break
         case "yarn":
             println "***INFO: Yarn bulid."
-            sh "pwd && yarn install && yarn build --scope web"
+            sh '''
+                pwd
+                yarn install
+                yarn build --scope web
+            '''
             break
         default:
             echo "***ERROR：Not support BUILD_TYPE, exit.."
