@@ -65,7 +65,7 @@ def call(body) {
                 }
                 steps {
                     script{
-                        sh "sleep 180"
+                        // sh "sleep 180"
                         String region = env.DOCKER_REGISTRY_HOST_TOKYO.tokenize('.')[-3].toLowerCase()
                         ECR.createRepository(region, METADATA.GROUP_NAME, null)
                     }
