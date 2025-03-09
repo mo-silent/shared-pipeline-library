@@ -61,7 +61,7 @@ def build(Map METADATA) {
             break
         case "yarn":
             println "***INFO: Yarn bulid."
-            sh '''
+            sh '''#!/bin/bash
                 pwd
                 yarn install
                 yarn build --scope web
