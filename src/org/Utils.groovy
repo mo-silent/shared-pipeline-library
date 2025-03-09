@@ -1,4 +1,5 @@
 #!groovy
+package org
 import groovy.json.JsonOutput
 
 /**
