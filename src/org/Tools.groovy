@@ -17,17 +17,17 @@ def checkoutSource( String repoUrl, String branch, String gitCredentialsId ){
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
         '''
-        sh "pwd && ls -l"
+        repo_dir = getRepoName(repoUrl)
         checkout([
             $class: 'GitSCM',
             branches: [[name: branch]],  // 分支名称
-            extensions: [[$class: 'CheckoutOption', timeout: 30], [$class: 'CleanBeforeCheckout', deleteUntrackedNestedRepositories: true],  [$class: 'RelativeTargetDirectory', relativeTargetDir: getRepoName(repoUrl)]],
+            extensions: [[$class: 'CheckoutOption', timeout: 30], [$class: 'CleanBeforeCheckout', deleteUntrackedNestedRepositories: true],  [$class: 'RelativeTargetDirectory', relativeTargetDir: repo_dir]],
             userRemoteConfigs: [[
                 url: repoUrl,  // Git 仓库的 HTTPS URL
                 credentialsId: gitCredentialsId  // 凭证的 ID
             ]]
         ])
-        sh "pwd && ls -l"
+        return repo_dir
     }
     // Map scmVars = checkout([
     //     $class: 'GitSCM',
@@ -49,4 +49,22 @@ def getRepoName(String repoUrl) {
     }
     // 提取最后一个 / 之后的部分
     return repoUrl.substring(repoUrl.lastIndexOf('/') + 1)
+}
+
+// 构建应用
+def build(Map METADATA) {
+    
+    switch( METADATA.BUILD_TYPE )
+      {
+        case "none":
+            println "***INFO：The code doesn't need compile."
+            break
+        case "yarn":
+            println "***INFO: Yarn bulid."
+            sh "pwd && yarn install && yarn build --scope web"
+            break
+        default:
+            echo "***ERROR：Not support BUILD_TYPE, exit.."
+            sh "exit 1"
+      }
 }

@@ -1,14 +1,20 @@
 #!groovy
 import org.*
-// import org.jenkinsci.plugins.credentialsbinding.impl.SuppressCredentialsInterceptors
 
 def call(body) {
     def config = [:]
     body.resolveStrategy = Closure.DELEGATE_FIRST
     body.delegate = config
     body()
+
+    // 实例化对象，导入共享库方法
+    def utils = new Utils()
     def tools = new Tools()
     def ECR = new org.aws.ECR()
+
+
+    // 获取项目参数并进行初始化处理和校验
+    Map METADATA = utils.getProjectParams('CI', config)
 
     pipeline {
         agent {
@@ -25,54 +31,57 @@ def call(body) {
             stage("get_evn") {
                 steps {
                     script {
-                        // def branchName = scm.branches[0].name
-                        // if (branchName.contains("*/")) {
-                        //     branchName = branchName.split("\\*/")[1]
-                        // }
-                        // echo "分支名称: ${branchName}"
-                        
-                        // def changedFiles = getChangedFiles()
-                        // def modifiedDirs = changedFiles.collect { it.split('/')[0] }.unique()
-                        // echo "修改的一级目录: ${modifiedDirs}"
-                        // sh """
-                        //     echo ***INFO：当前目录是 `pwd` && echo ***INFO：列出target目录文件 && ls -lha
-                        // """
-
-                        // sh 'mkdir -p dist && echo "Build output" > dist/output.txt'
-                        // stash includes: 'dist/**', name: 'dist-stash'
-                        
-                        echo "当前的config 信息: ${config}"
-                        // sh 'aws --version'
-                        // sh 'aws ecr get-login-password --region us-west-2 > token.txt'
-                        // sh 'cat token.txt'
-                        if (config.GROUP_NAME) {
-                            String region = env.DOCKER_REGISTRY_HOST_TOKYO.tokenize('.')[-3].toLowerCase()
-                            
-                            // ECR.createRepository(region, config.GROUP_NAME, null)
+                        def branchName = scm.branches[0].name
+                        if (branchName.contains("*/")) {
+                            branchName = branchName.split("\\*/")[1]
                         }
-                        if (config.GIT_REPO) {
-                            def GIT_API_TOKEN = credentials(env.GIT_CREDENTIAL_ID)
-                            println "token: ${GIT_API_TOKEN}"
-                            tools.checkoutSource(config.GIT_REPO, "main", env.GIT_CREDENTIAL_ID)
-                        }
+                        echo "分支名称: ${branchName}"
+                        METADATA.put("branchName", branchName)
+                        
+                        def changedFiles = getChangedFiles()
+                        def modifiedDirs = changedFiles.collect { it.split('/')[0] }.unique()
+                        echo "修改的一级目录: ${modifiedDirs}"
+                        METADATA.put("modifiedDirs", modifiedDirs)
                     }
                 }
             }
-            stage("Build for AMD64 platform") {
-              agent {
-                kubernetes {
-                    yaml Kanikotemplate()
+            stage("Build_Src") {
+                steps {
+                    script{
+                        repo_dir = tools.checkoutSource(METADATA.GIT_REPO, "release", env.GIT_CREDENTIAL_ID)
+                        dir(repo_dir) {
+                            sh "pwd && ls -l"
+
+                            tools.build(METADATA)
+                            stash includes: 'web/dist/**', name: 'web-dist'
+                        }
+                    }
+                    
                 }
-              }
-              steps {
-                container('kaniko') {
-                    echo 'Building the Docker image'
-                    // unstash 'dist-stash'
-                    // sh 'cat dist/output.txt'
-                    // sh 'sleep 180'
-                    // sh '/kaniko/executor --context `pwd` --dockerfile `pwd`/Dockerfile --destination 617482875210.dkr.ecr.us-east-1.amazonaws.com/java-demo:202310-02-amd64'
+            }
+            stage("Build Docker images") {
+                when {
+                    equals expected: "true", 
+                    actual: METADATA.IS_DOCKER
                 }
-              }
+                agent {
+                    kubernetes {
+                        yaml Kanikotemplate()
+                    }
+                }
+                steps {
+                    script{
+                        String region = env.DOCKER_REGISTRY_HOST_TOKYO.tokenize('.')[-3].toLowerCase()
+                        ECR.createRepository(region, METADATA.GROUP_NAME, null)
+                    }
+                    container('kaniko') {
+                        echo 'Building the Docker image'
+                        unstash 'web-dist'
+                        sh 'ls -la'
+                        // sh 'sleep 180'
+                        // sh '/kaniko/executor --context `pwd` --dockerfile `pwd`/Dockerfile --destination 617482875210.dkr.ecr.us-east-1.amazonaws.com/java-demo:202310-02-amd64'
+                    }
+                }
             }
         }
     }
