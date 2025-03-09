@@ -62,11 +62,10 @@ def build(Map METADATA) {
         case "yarn":
             println "***INFO: Yarn bulid."
             sh '''
-                pwd
                 export PATH=$PATH:/root/.nvm/versions/node/v23.9.0/bin
                 yarn install
-                yarn build --scope web
             '''
+            sh "export PATH=$PATH:/root/.nvm/versions/node/v23.9.0/bin && yarn build --scope web"
             break
         default:
             echo "***ERROR：Not support BUILD_TYPE, exit.."

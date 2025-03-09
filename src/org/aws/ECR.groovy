@@ -5,7 +5,7 @@ def createRepository(String region, String repoName, String roleArn) {
     if (roleArn) {
         sh "aws sts assume-role --role-arn ${roleArn} --role-session-name jenkins-slave-login-ecr --region ${region} > creds.json"
     } else {
-        sh "aws sts get-caller-identity --output json > creds.json"
+        sh "aws sts get-session-token --duration-seconds 900 --output json > creds.json"
     }
     sh "cat creds.json"
     def creds = readJSON file: 'creds.json'
