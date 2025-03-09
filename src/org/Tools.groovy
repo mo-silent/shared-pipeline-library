@@ -63,6 +63,7 @@ def build(Map METADATA) {
             println "***INFO: Yarn bulid."
             sh '''
                 pwd
+                export PATH=$PATH:/root/.nvm/versions/node/v23.9.0/bin
                 yarn install
                 yarn build --scope web
             '''
