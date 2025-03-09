@@ -51,7 +51,7 @@ def call(body) {
                         repo_dir = tools.checkoutSource(METADATA.GIT_REPO, "release", env.GIT_CREDENTIAL_ID)
                         dir(repo_dir) {
                             sh "pwd && ls -l"
-
+                            sh "sleep 360"
                             tools.build(METADATA)
                             stash includes: 'web/dist/**', name: 'web-dist'
                         }
