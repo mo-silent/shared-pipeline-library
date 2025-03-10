@@ -64,7 +64,7 @@ def call(body) {
 
                         echo "修改的一级目录: ${modifiedDirs}"
                         echo "BUILD_TAG: ${BUILD_TAG}"
-                        sh 'exit 1'
+                        // sh 'exit 1'
                     }
                 }
             }
@@ -123,10 +123,12 @@ def call(body) {
                                     println "***INFO: unstash ${dir}"
                                     if (dir == "editor" && !METADATA.modifiedDirs.contains("web")) {
                                         unstash "web-dist"
+                                        sh "ls -la web-dist/"
+                                        // dockerUtils.createWebDockerfile("web-dist", buildEnv)
                                         workDirs << "web-dist"
                                     }
                                     unstash "${dir}-dist"
-                                    dockerUtils.createWebDockerfile(dir, buildEnv)
+                                    // dockerUtils.createWebDockerfile(dir, buildEnv)
                                     sh "ls -la ${dir}-dist/"
                                     workDirs << "${dir}-dist"
                                 }
