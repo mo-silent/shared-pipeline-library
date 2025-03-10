@@ -11,7 +11,8 @@ def createWebDockerfile(String path, Map METADATA){
 
         cd Dockerfile/plaud-web/
         mkdir -p ../data/${path}
-        cp nginx.template ../data/${path}/nginx.template
+        // 使用sh命令复制nginx模板文件
+        sh "cp nginx.template ../data/${path}/nginx.template"
         
         # 读取当前目录的Dockerfile内容
         // 根据path参数选择不同的Dockerfile模板
