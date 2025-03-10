@@ -60,33 +60,32 @@ def build(Map METADATA) {
             break
         case "yarn":
             println "***INFO: Yarn bulid."
-            sh "mkdir -p stash-dist"
+            sh "mkdir -p plaud-web-dist"
             def modify_package_json = libraryResource 'plaud_web/modify_package_json.sh'
             METADATA.modifiedDirs.each { dir ->
                 println "***INFO: Bulid branch ${dir}"
                 
-                // sh '''
-                //     set +x
-                //     export PATH=$PATH:/root/.nvm/versions/node/v23.9.0/bin
-                //     yarn install
-                // '''
+                sh '''
+                    set +x
+                    export PATH=$PATH:/root/.nvm/versions/node/v23.9.0/bin
+                    yarn install
+                '''
                 writeFile text: modify_package_json, file: "./${dir}/modify_package_json.sh", encoding: "UTF-8"
                 sh """
                     set +x
                     cd ${dir}
                     bash modify_package_json.sh
-                    # export PATH=\$PATH:/root/.nvm/versions/node/v23.9.0/bin && yarn build
+                    export PATH=\$PATH:/root/.nvm/versions/node/v23.9.0/bin && yarn build
                     # 读取当前目录下的package.json
                     cat package.json
                 """
-                // sh """
-                //     mkdir -p stash-dist/${dir}
-                //     mv ${dir}/dist/* stash-dist/${dir}
-                // """
-                
+                sh """
+                    mkdir -p plaud-web-dist/${dir}
+                    mv ${dir}/dist/* plaud-web-dist/${dir}
+                """
             }
-            sh "echo 'test' > stash-dist/test.txt"
-            stash includes: "stash-dist/**", name: "stash-dist", allowEmpty: true, useDefaultExcludes: false
+            // sh "echo 'test' > plaud-web-dist/test.txt"
+            stash includes: "plaud-web-dist/**", name: "plaud-web-dist", allowEmpty: true, useDefaultExcludes: false
             break
         default:
             echo "***ERROR: Not support BUILD_TYPE, exit.."

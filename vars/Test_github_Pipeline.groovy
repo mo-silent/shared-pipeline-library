@@ -110,7 +110,7 @@ def call(body) {
                         }
                         parallel parallelSteps
                         sh "pwd && ls -la"
-                        stash includes: "docker-data/**", name: "data-dist", allowEmpty: true, useDefaultExcludes: false
+                        stash includes: "docker-data/**", name: "docker-data-dist", allowEmpty: true, useDefaultExcludes: false
                     }
                 }
             }
@@ -129,8 +129,8 @@ def call(body) {
                         echo 'Building the Docker image'
                         script {
                             sh "pwd && ls -la"
-                            unstash "stash-dist"
-                            unstash "data-dist"
+                            unstash "plaud-web-dist"
+                            unstash "docker-data-dist"
                             sh "ls -la"
                             sh 'sleep 180'
                         }
