@@ -62,7 +62,6 @@ def build(Map METADATA) {
             println "***INFO: Yarn bulid."
             sh "mkdir -p stash-dist"
             def modify_package_json = libraryResource 'plaud_web/modify_package_json.sh'
-            writeFile text: modify_package_json, file: "./modify_package_json.sh", encoding: "UTF-8"
             METADATA.modifiedDirs.each { dir ->
                 println "***INFO: Bulid branch ${dir}"
                 
@@ -70,6 +69,7 @@ def build(Map METADATA) {
                     export PATH=$PATH:/root/.nvm/versions/node/v23.9.0/bin
                     yarn install
                 '''
+                writeFile text: modify_package_json, file: "./${dir}/modify_package_json.sh", encoding: "UTF-8"
                 sh """
                     cd ${dir}
                     # 读取当前目录下的package.json
