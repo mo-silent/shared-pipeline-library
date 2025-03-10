@@ -72,6 +72,7 @@ def call(body) {
                 steps {
                     script{
                         repo_dir = tools.checkoutSource(METADATA.GIT_REPO, METADATA.branchName, env.GIT_CREDENTIAL_ID)
+                        METADATA.put("repo_dir", repo_dir)
                         dir(repo_dir) {
                             sh "pwd && ls -l"
                             tools.build(METADATA)
@@ -92,6 +93,24 @@ def call(body) {
                     }
                 }
             }
+            stage("Create Docker Files") {
+                when {
+                    equals expected: "true",
+                    actual: METADATA.IS_DOCKER
+                }
+                steps {
+                    script{
+                        def parallelSteps = [:]
+                        METADATA.modifiedDirs.each { dir ->
+                            parallelSteps["create-dockerfile-${dir}"] = {
+                                dockerUtils.createWebDockerfile(dir, METADATA)
+                            }
+                        }
+                        parallel parallelSteps
+                        stash includes: "/data/**", name: "data-dist", allowEmpty: true, useDefaultExcludes: false
+                    }
+                }
+            }
             stage("Build Docker images") {
                 when {
                     equals expected: "true", 
@@ -106,34 +125,10 @@ def call(body) {
                     container('kaniko') {
                         echo 'Building the Docker image'
                         script {
-                            def buildEnv = ''
-                            // 根据分支名称设置构建环境
-                            if (METADATA.branchName == 'release') {
-                                buildEnv = 'uat'
-                            } else if (METADATA.branchName.startsWith('feature')) {
-                                buildEnv = 'qa'
-                            } 
                             sh "ls -la"
                             unstash "stash-dist"
-                            // 创建并行任务列表
-                            def parallelSteps = [:]
-                            def workDirs = []
-                            METADATA.modifiedDirs.each { dir ->
-                                // 为每个目录创建一个并行任务
-                                parallelSteps["Unstash-${dir}"] = {
-                                    println "***INFO: unstash ${dir}"
-                                    
-                                    // dockerUtils.createWebDockerfile(dir, buildEnv)
-                                    
-                                    workDirs << "${dir}"
-                                }
-                            }
-                            
-                            // 并行执行所有unstash任务
-                            parallel parallelSteps
-                            sh "ls -la Dockerfile/plaud-web/"
-                            sh "ls -la stash-dist/"
-                            echo "workDirs: ${workDirs}"
+                            unstash "data-dist"
+                            sh "ls -la"
                             sh 'sleep 180'
                         }
                         // sh 'sleep 180'
@@ -148,19 +143,20 @@ def call(body) {
                 }
                 steps {
                     script{
+                        sh "echo 'Call CD Pipeline'"
                         // 调用 CD 流水线
-                        def cdPipelineUrl = 'cd-web'
-                        def buildEnv = ''
-                        // 根据分支名称设置构建环境
-                        if (METADATA.branchName.startsWith('release')) {
-                            buildEnv = 'uat'
-                        } else if (METADATA.branchName.startsWith('feature')) {
-                            buildEnv = 'qa'
-                        }
-                        // 调用CD流水线并传入环境参数
-                        build job: cdPipelineUrl, parameters: [
-                            string(name: 'ENV', value: buildEnv)
-                        ]
+                        // def cdPipelineUrl = 'cd-web'
+                        // def buildEnv = ''
+                        // // 根据分支名称设置构建环境
+                        // if (METADATA.branchName.startsWith('release')) {
+                        //     buildEnv = 'uat'
+                        // } else if (METADATA.branchName.startsWith('feature')) {
+                        //     buildEnv = 'qa'
+                        // }
+                        // // 调用CD流水线并传入环境参数
+                        // build job: cdPipelineUrl, parameters: [
+                        //     string(name: 'ENV', value: buildEnv)
+                        // ]
                     }
                 }
             }

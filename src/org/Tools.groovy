@@ -73,6 +73,7 @@ def build(Map METADATA) {
                 sh """
                     cd ${dir}
                     # 读取当前目录下的package.json
+                    apt install jq -y
                     bash modify_package_json.sh
                     export PATH=\$PATH:/root/.nvm/versions/node/v23.9.0/bin && yarn build
                     cat package.json
