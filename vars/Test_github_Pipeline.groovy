@@ -94,9 +94,6 @@ def call(body) {
                         script {
                             METADATA.modifiedDirs.each { dir ->
                                 println "***INFO: unstash ${dir}"
-                                if (dir == "web" && !METADATA.modifiedDirs.contains("editor")) {
-                                    unstash "editor-dist"
-                                }
                                 if (dir == "editor" && !METADATA.modifiedDirs.contains("web")) {
                                     unstash "web-dist"
                                 }
@@ -104,8 +101,31 @@ def call(body) {
                             }
                         }
                         sh 'ls -la'
-                        // sh 'sleep 180'
+                        sh 'sleep 180'
                         // sh '/kaniko/executor --context `pwd` --dockerfile `pwd`/Dockerfile --destination 617482875210.dkr.ecr.us-east-1.amazonaws.com/java-demo:202310-02-amd64'
+                    }
+                }
+            }
+            stage("Call CD Pipeline") {
+                when {
+                    equals expected: "false",
+                    actual: METADATA.IS_DOCKER
+                }
+                steps {
+                    script{
+                        // 调用 CD 流水线
+                        def cdPipelineUrl = 'cd-web'
+                        def buildEnv = ''
+                        // 根据分支名称设置构建环境
+                        if (METADATA.branchName.startsWith('release')) {
+                            buildEnv = 'uat'
+                        } else if (METADATA.branchName.startsWith('feature')) {
+                            buildEnv = 'qa'
+                        }
+                        // 调用CD流水线并传入环境参数
+                        build job: cdPipelineUrl, parameters: [
+                            string(name: 'ENV', value: buildEnv)
+                        ]
                     }
                 }
             }

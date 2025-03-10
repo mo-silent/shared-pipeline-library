@@ -58,11 +58,10 @@ def build(Map METADATA) {
                     export PATH=$PATH:/root/.nvm/versions/node/v23.9.0/bin
                     yarn install
                 '''
-                sh "/root/.nvm/versions/node/v23.9.0/bin/yarn build --scope ${dir}"
-                if ( METADATA.modifiedDirs[i] == "web" && !METADATA.modifiedDirs.contains("editor")){
-                    sh "/root/.nvm/versions/node/v23.9.0/bin/yarn build --scope editor"
-                    stash includes: "editor/dist/**", name: "editor-dist"
-                }
+                sh '''
+                    export PATH=$PATH:/root/.nvm/versions/node/v23.9.0/bin
+                    yarn build --scope ${dir}
+                '''
                 if ( METADATA.modifiedDirs[i] == "editor" && !METADATA.modifiedDirs.contains("web")){
                     sh "/root/.nvm/versions/node/v23.9.0/bin/yarn build --scope web"
                     stash includes: "web/dist/**", name: "web-dist"
