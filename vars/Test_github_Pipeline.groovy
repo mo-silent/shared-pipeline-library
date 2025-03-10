@@ -141,6 +141,7 @@ def call(body) {
                                 def tags = "${env.DOCKER_REGISTRY_HOST_TOKYO}/${METADATA.GROUP_NAME}/${dir}:${METADATA.BUILD_TAG}"
                                 echo "tags: ${tags}"
                                 sh "ls -la docker-data/${dir}"
+                                sh "sleep 180"
                                 dockerUtils.kanikoPush(tags, "docker-data/${dir}")
                                 // }
                             }
