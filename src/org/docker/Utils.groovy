@@ -7,6 +7,10 @@ def createWebDockerfile(String path, Map METADATA){
     sh "bash ./create_docker_file.sh ${METADATA.repo_dir} ${path} ${METADATA.GROUP_NAME}"
 }
 
-def kanikoPush(String tags){
-    sh "/kaniko/executor --context `pwd` --dockerfile `pwd`/Dockerfile --destination ${tags}"
+def kanikoPush(String tags,String path){
+    sh """
+        set +x
+        cd ${path}
+        /kaniko/executor --context `pwd` --dockerfile `pwd`/Dockerfile --destination ${tags}
+    """
 }

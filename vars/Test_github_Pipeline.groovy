@@ -140,7 +140,8 @@ def call(body) {
                                 // parallelSteps["create-dockerfile-${dir}"] = {
                                 def tags = "${env.DOCKER_REGISTRY_HOST_TOKYO}/${METADATA.GROUP_NAME}/${dir}:${METADATA.BUILD_TAG}"
                                 echo "tags: ${tags}"
-                                dockerUtils.kanikoPush(tags)
+                                sh "ls -la docker-data/${dir}"
+                                dockerUtils.kanikoPush(tags, "docker-data/${dir}")
                                 // }
                             }
                             // parallel parallelSteps
