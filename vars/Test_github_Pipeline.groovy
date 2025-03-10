@@ -33,8 +33,9 @@ def call(body) {
                 steps {
                     script {
                         def branchName = env.ref.replaceFirst('refs/heads/', '')
-                        echo "分支名称: ${branchName}"
                         METADATA.put("branchName", branchName)
+                        echo "分支名称: ${branchName}"
+
                         if (!(METADATA.branchName == 'release' || METADATA.branchName.startsWith('feature'))) {
                             echo "当前分支 ${METADATA.branchName} 不是 release 或以 feature 开头的分支，流水线将退出"
                             currentBuild.result = 'ABORTED'
@@ -54,8 +55,13 @@ def call(body) {
                             }
                         }
                         modifiedDirs = modifiedDirs.unique()
-                        echo "修改的一级目录: ${modifiedDirs}"
                         METADATA.put("modifiedDirs", modifiedDirs)
+
+                        def BUILD_TAG = jenkins.setJobDisplayName("CI", METADATA)   
+                        METADATA.put("BUILD_TAG", BUILD_TAG)
+                        
+                        echo "修改的一级目录: ${modifiedDirs}"
+                        echo "BUILD_TAG: ${BUILD_TAG}"
                     }
                 }
             }
