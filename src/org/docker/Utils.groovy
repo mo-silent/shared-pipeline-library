@@ -5,9 +5,12 @@ def createWebDockerfile(String path, Map METADATA){
     sh """
         cd Dockerfile/plaud-web/
         mkdir -p ../data/${path}
+        cp nginx.template ../data/${path}/nginx.template
         // 读取package.json中的name字段作为publicPath
+        ls -la ${METADATA.repo_dir}/
+        echo "***INFO: The path is ${METADATA.repo_dir}/${path}"
         publicPath=\$(cat ${METADATA.repo_dir}/${path}/package.json | grep "name" | cut -d'"' -f4)
-        echo "\${publicPath}"
+        echo "\${publicPath}"   
         # 读取当前目录的Dockerfile内容
         // 根据path参数选择不同的Dockerfile模板
         dockerfile_content=\$(if [ "${path}" = "editor" ]; then cat editor_Dockerfile; else cat Dockerfile; fi)
