@@ -48,13 +48,12 @@ def call(body) {
             stage("Build_Src") {
                 steps {
                     script{
-                        sh "pwd && ls -l"
-                        // repo_dir = tools.checkoutSource(METADATA.GIT_REPO, "release", env.GIT_CREDENTIAL_ID)
-                        // dir(repo_dir) {
-                        //     sh "pwd && ls -l"
-                        //     tools.build(METADATA)
-                        //     stash includes: 'web/dist/**', name: 'web-dist'
-                        // }
+                        repo_dir = tools.checkoutSource(METADATA.GIT_REPO, "release", env.GIT_CREDENTIAL_ID)
+                        dir(repo_dir) {
+                            sh "pwd && ls -l"
+                            tools.build(METADATA)
+                            stash includes: 'web/dist/**', name: 'web-dist'
+                        }
                     }
                     
                 }
