@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat
 import jenkins.model.Jenkins as JavaJenkins
 import hudson.model.Job
 
-// 设置当次构建显示名称
+// set current build display name
 def setJobDisplayName(String jobType, Map METADATA) {
     String buildNum = "v" + env.BUILD_NUMBER.trim()
     String branch = METADATA.branchName ?: 'null'
