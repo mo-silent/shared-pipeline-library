@@ -98,10 +98,11 @@ def call(body) {
                                     unstash "web-dist"
                                 }
                                 unstash "${dir}-dist"
+                                sh "ls -la ${dir}-dist/"
                             }
                         }
                         sh 'ls -la'
-                        sh 'sleep 180'
+                        // sh 'sleep 180'
                         // sh '/kaniko/executor --context `pwd` --dockerfile `pwd`/Dockerfile --destination 617482875210.dkr.ecr.us-east-1.amazonaws.com/java-demo:202310-02-amd64'
                     }
                 }

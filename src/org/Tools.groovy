@@ -3,7 +3,11 @@ package org
 import org.*
 import java.util.regex.*
 
-// Git代码迁出
+/**
+* @author:  Silent.Mo
+* @description: Git代码迁出
+* @parameter: repoUrl, branch, gitCredentialsId
+*/
 def checkoutSource( String repoUrl, String branch, String gitCredentialsId ){
     withCredentials([sshUserPrivateKey(
         credentialsId: gitCredentialsId,  // 凭证的 ID
@@ -32,6 +36,11 @@ def checkoutSource( String repoUrl, String branch, String gitCredentialsId ){
     
 }
 
+/**
+* @author:  Silent.Mo
+* @description: 通过 repoURL 获取仓库名称
+* @parameter: repoUrl
+*/
 def getRepoName(String repoUrl) {
     // 去掉 URL 末尾的 .git（如果存在）
     if (repoUrl.endsWith('.git')) {
@@ -73,17 +82,4 @@ def build(Map METADATA) {
             echo "***ERROR: Not support BUILD_TYPE, exit.."
             sh "exit 1"
       }
-}
-
-@NonCPS
-def getChangedFiles() {
-    def changedFiles = []
-    for (changeLogSet in currentBuild.changeSets) {
-        for (entry in changeLogSet.items) {
-            for (file in entry.affectedFiles) {
-                changedFiles.add(file.path)
-            }
-        }
-    }
-    return changedFiles
 }
