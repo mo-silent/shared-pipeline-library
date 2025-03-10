@@ -10,12 +10,12 @@ spec:
   securityContext:
     fsGroup: 1000
   serviceAccountName: jenkins
-  tolerations:
-  - effect: NoSchedule
-    key: devops-spot
-    operator: Equal
-  nodeSelector:
-    app: devops
+  // tolerations:
+  // - effect: NoSchedule
+  //   key: devops-spot
+  //   operator: Equal
+  // nodeSelector:
+  //   app: devops
   containers:
     - name: kaniko
       image: gcr.io/kaniko-project/executor:debug
