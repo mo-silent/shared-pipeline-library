@@ -121,15 +121,15 @@ def call(body) {
                                 // 为每个目录创建一个并行任务
                                 parallelSteps["Unstash-${dir}"] = {
                                     println "***INFO: unstash ${dir}"
-                                    if (dir == "editor" && !METADATA.modifiedDirs.contains("web")) {
-                                        unstash "web-dist"
-                                        sh "ls -la web-dist/"
-                                        // dockerUtils.createWebDockerfile("web-dist", buildEnv)
-                                        workDirs << "web-dist"
-                                    }
+                                    // if (dir == "editor" && !METADATA.modifiedDirs.contains("web")) {
+                                    //     unstash "web-dist"
+                                    //     sh "ls -la web-dist/"
+                                    //     // dockerUtils.createWebDockerfile("web-dist", buildEnv)
+                                    //     workDirs << "web-dist"
+                                    // }
                                     unstash "${dir}-dist"
                                     // dockerUtils.createWebDockerfile(dir, buildEnv)
-                                    sh "ls -la ${dir}-dist/"
+                                    sh "ls -la"
                                     workDirs << "${dir}-dist"
                                 }
                             }
