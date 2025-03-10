@@ -12,6 +12,7 @@ def call(body) {
     def tools = new Tools()
     def ECR = new org.aws.ECR()
     def dockerUtils = new org.docker.Utils()
+    def jenkins = new Jenkins()
 
 
     // 获取项目参数并进行初始化处理和校验
