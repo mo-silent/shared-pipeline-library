@@ -36,10 +36,19 @@ def call(body) {
                         METADATA.put("branchName", branchName)
                         
                         // def changedFiles = env.modified
-                        def modifiedDirs = env.commits*.modified.flatten()
-                                                .findAll { it.contains('/') }
-                                                .collect { it.substring(0, it.indexOf('/')) }
-                                                .unique()
+                        // 处理修改的文件目录
+                        def modifiedDirs = []
+                        def commits = readJSON text: env.commits
+                        commits.each { commit ->
+                            if (commit.modified) {
+                                commit.modified.each { file ->
+                                    if (file.contains('/')) {
+                                        modifiedDirs << file.substring(0, file.indexOf('/'))
+                                    }
+                                }
+                            }
+                        }
+                        modifiedDirs = modifiedDirs.unique()
                         echo "修改的一级目录: ${modifiedDirs}"
                         METADATA.put("modifiedDirs", modifiedDirs)
                     }
