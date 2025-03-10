@@ -11,6 +11,7 @@ def call(body) {
     def utils = new Utils()
     def tools = new Tools()
     def ECR = new org.aws.ECR()
+    def dockerUtils = new org.docker.Utils()
 
 
     // 获取项目参数并进行初始化处理和校验
@@ -34,7 +35,11 @@ def call(body) {
                         def branchName = env.ref.replaceFirst('refs/heads/', '')
                         echo "分支名称: ${branchName}"
                         METADATA.put("branchName", branchName)
-                        
+                        if (!(METADATA.branchName == 'release' || METADATA.branchName.startsWith('feature'))) {
+                            echo "当前分支 ${METADATA.branchName} 不是 release 或以 feature 开头的分支，流水线将退出"
+                            currentBuild.result = 'ABORTED'
+                            error("流水线已中止：不支持的分支类型")
+                        }
                         // def changedFiles = env.modified
                         // 处理修改的文件目录
                         def modifiedDirs = []
@@ -92,14 +97,31 @@ def call(body) {
                     container('kaniko') {
                         echo 'Building the Docker image'
                         script {
-                            METADATA.modifiedDirs.each { dir ->
-                                println "***INFO: unstash ${dir}"
-                                if (dir == "editor" && !METADATA.modifiedDirs.contains("web")) {
-                                    unstash "web-dist"
-                                }
-                                unstash "${dir}-dist"
-                                sh "ls -la ${dir}-dist/"
+                            def buildEnv = ''
+                            // 根据分支名称设置构建环境
+                            if (METADATA.branchName == 'release') {
+                                buildEnv = 'uat'
+                            } else if (METADATA.branchName.startsWith('feature')) {
+                                buildEnv = 'qa'
                             }
+                            // 创建并行任务列表
+                            def parallelSteps = [:]
+                            
+                            METADATA.modifiedDirs.each { dir ->
+                                // 为每个目录创建一个并行任务
+                                parallelSteps["Unstash-${dir}"] = {
+                                    println "***INFO: unstash ${dir}"
+                                    if (dir == "editor" && !METADATA.modifiedDirs.contains("web")) {
+                                        unstash "web-dist"
+                                    }
+                                    unstash "${dir}-dist"
+                                    dockerUtils.createWebDockerfile(dir, buildEnv)
+                                    sh "ls -la ${dir}-dist/"
+                                }
+                            }
+                            
+                            // 并行执行所有unstash任务
+                            parallel parallelSteps
                         }
                         sh 'ls -la'
                         // sh 'sleep 180'

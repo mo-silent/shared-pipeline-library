@@ -67,10 +67,8 @@ def build(Map METADATA) {
                     export PATH=$PATH:/root/.nvm/versions/node/v23.9.0/bin
                     yarn install
                 '''
-                sh '''
-                    export PATH=$PATH:/root/.nvm/versions/node/v23.9.0/bin
-                    yarn build --scope ${dir}
-                '''
+                // 在多行字符串中无法直接使用Groovy变量，需要使用双引号并转义
+                sh "export PATH=\$PATH:/root/.nvm/versions/node/v23.9.0/bin && yarn build --scope ${dir}"
                 if ( METADATA.modifiedDirs[i] == "editor" && !METADATA.modifiedDirs.contains("web")){
                     sh "/root/.nvm/versions/node/v23.9.0/bin/yarn build --scope web"
                     stash includes: "web/dist/**", name: "web-dist"
