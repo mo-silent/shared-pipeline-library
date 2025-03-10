@@ -70,7 +70,7 @@ def build(Map METADATA) {
                 // 在多行字符串中无法直接使用Groovy变量，需要使用双引号并转义
                 sh "export PATH=\$PATH:/root/.nvm/versions/node/v23.9.0/bin && yarn build --scope ${dir}"
                 if ( dir == "editor" && !METADATA.modifiedDirs.contains("web")){
-                    sh "/root/.nvm/versions/node/v23.9.0/bin/yarn build --scope web"
+                    sh "export PATH=\$PATH:/root/.nvm/versions/node/v23.9.0/bin && yarn build --scope web"
                     stash includes: "web/dist/**", name: "web-dist"
                 }
                 stash includes: "${dir}/dist/**", name: "${dir}-dist"
