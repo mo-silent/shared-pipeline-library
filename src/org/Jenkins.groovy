@@ -8,7 +8,8 @@ import hudson.model.Job
 // set current build display name
 def setJobDisplayName(String jobType, Map METADATA) {
     String buildNum = "v" + env.BUILD_NUMBER.trim()
-    String branch = METADATA.branchName ?: 'null'
+    // Get the branch name, if it contains /, get the content before the first /, otherwise return the original value or 'null'
+    String branch = METADATA.branchName ? (METADATA.branchName.contains('/') ? METADATA.branchName.split('/')[0] : METADATA.branchName) : 'null'
     println "buildNum: ${buildNum}"
 
     long unixTimestamp = currentBuild.startTimeInMillis
@@ -22,7 +23,7 @@ def setJobDisplayName(String jobType, Map METADATA) {
             break
 
         default:
-            currentBuild.displayName = buildNum + "-" + startTime + "-" + branch
+            currentBuild.displayName = buildNum + "-" + branch + "-" + startTime 
     }
 
     return currentBuild.displayName
