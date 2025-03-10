@@ -7,20 +7,31 @@ import hudson.model.Job
 
 // set current build display name
 def setJobDisplayName(String jobType, Map METADATA) {
-    String buildNum = "v" + env.BUILD_NUMBER.trim()
+    // 获取Jenkins环境变量
+    def env = JavaJenkins.getInstance().getGlobalNodeProperties()?.get(hudson.slaves.EnvironmentVariablesNodeProperty.class)?.getEnvVars()
+    
+    String buildNum = "v" + (env?.BUILD_NUMBER?.trim() ?: '0')
     String branch = METADATA.branchName ?: 'null'
 
-    long unixTimestamp = currentBuild.startTimeInMillis
+    // 获取当前构建实例
+    def currentBuild = JavaJenkins.getInstance().getItemByFullName(env.JOB_NAME)?.getBuildByNumber(Integer.parseInt(env.BUILD_NUMBER))
+    
+    long unixTimestamp = currentBuild?.getStartTimeInMillis() ?: System.currentTimeMillis()
     String startTime = new SimpleDateFormat("yyyyMMddHHmmss").format(unixTimestamp)
 
+    String displayName
     switch (jobType?.toUpperCase()) {
         case ~/(?i)CD|SECRET/:
-            currentBuild.displayName = buildNum + "-" + startTime
+            displayName = buildNum + "-" + startTime
             break
 
         default:
-            currentBuild.displayName = buildNum + "-" + startTime + "-" + branch
+            displayName = buildNum + "-" + startTime + "-" + branch
     }
 
-    return currentBuild.displayName
+    if (currentBuild) {
+        currentBuild.setDisplayName(displayName)
+    }
+
+    return displayName
 }
