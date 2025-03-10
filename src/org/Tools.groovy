@@ -66,11 +66,13 @@ def build(Map METADATA) {
                 println "***INFO: Bulid branch ${dir}"
                 
                 sh '''
+                    set +x
                     export PATH=$PATH:/root/.nvm/versions/node/v23.9.0/bin
                     yarn install
                 '''
                 writeFile text: modify_package_json, file: "./${dir}/modify_package_json.sh", encoding: "UTF-8"
                 sh """
+                    set +x
                     cd ${dir}
                     bash modify_package_json.sh
                     export PATH=\$PATH:/root/.nvm/versions/node/v23.9.0/bin && yarn build
