@@ -100,6 +100,8 @@ def call(body) {
                 }
                 steps {
                     script{
+                        echo "repo_dir: ${METADATA.repo_dir}"
+                        sh "pwd && ls -l ${METADATA.repo_dir}/"
                         def parallelSteps = [:]
                         METADATA.modifiedDirs.each { dir ->
                             parallelSteps["create-dockerfile-${dir}"] = {
