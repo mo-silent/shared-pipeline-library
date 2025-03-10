@@ -21,6 +21,7 @@ def createRepository(String region, String repoName, String roleArn) {
 @NonCPS
 def createNewRepository(String region, String repoName){
     sh "aws ecr get-login-password --region ${region} > token.txt"
+    sh "aws ecr describe-repositories --repository-names ${repoName} --region ${region}"
     def repoExists = sh(script: "aws ecr describe-repositories --repository-names ${repoName} --region ${region}", returnStatus: true) == 0
     if (!repoExists) {
         sh "aws ecr create-repository --repository-name ${repoName} --region ${region}"

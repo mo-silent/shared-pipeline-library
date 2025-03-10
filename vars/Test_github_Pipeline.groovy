@@ -112,6 +112,7 @@ def call(body) {
                             echo "dir: ${dir}"
                             String region = env.DOCKER_REGISTRY_HOST_TOKYO.tokenize('.')[-3].toLowerCase()
                             def repoName = "${METADATA.GROUP_NAME}/${dir}"
+                            echo "repoName: ${repoName}"
                             ECR.createRepository(region, repoName, null)
                         }
                     }

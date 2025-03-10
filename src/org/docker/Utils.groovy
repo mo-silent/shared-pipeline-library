@@ -11,6 +11,6 @@ def kanikoPush(String tags,String path){
     sh """
         set +x
         cd ${path}
-        /kaniko/executor --context `pwd` --dockerfile `pwd`/Dockerfile --destination ${tags}
+        /kaniko/executor --context `pwd` --dockerfile `pwd`/Dockerfile --destination ${tags} --verbosity=debug
     """
 }
