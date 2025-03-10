@@ -51,14 +51,14 @@ def build(Map METADATA) {
             break
         case "yarn":
             println "***INFO: Yarn bulid."
-            for (int i = 0; i < METADATA.modifiedDirs.size(); i++) {
-                println "***INFO: Bulid branch ${METADATA.modifiedDirs[i]}"
+            METADATA.modifiedDirs.each { dir ->
+                println "***INFO: Bulid branch ${dir}"
                 
                 sh '''
                     export PATH=$PATH:/root/.nvm/versions/node/v23.9.0/bin
                     yarn install
                 '''
-                sh "/root/.nvm/versions/node/v23.9.0/bin/yarn build --scope ${METADATA.modifiedDirs[i]}"
+                sh "/root/.nvm/versions/node/v23.9.0/bin/yarn build --scope ${dir}"
                 if ( METADATA.modifiedDirs[i] == "web" && !METADATA.modifiedDirs.contains("editor")){
                     sh "/root/.nvm/versions/node/v23.9.0/bin/yarn build --scope editor"
                     stash includes: "editor/dist/**", name: "editor-dist"
@@ -67,11 +67,11 @@ def build(Map METADATA) {
                     sh "/root/.nvm/versions/node/v23.9.0/bin/yarn build --scope web"
                     stash includes: "web/dist/**", name: "web-dist"
                 }
-                stash includes: "${METADATA.modifiedDirs[i]}/dist/**", name: "${METADATA.modifiedDirs[i]}-dist"
+                stash includes: "${dir}/dist/**", name: "${dir}-dist"
             }
             break
         default:
-            echo "***ERROR：Not support BUILD_TYPE, exit.."
+            echo "***ERROR: Not support BUILD_TYPE, exit.."
             sh "exit 1"
       }
 }

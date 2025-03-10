@@ -83,15 +83,17 @@ def call(body) {
                 steps {
                     container('kaniko') {
                         echo 'Building the Docker image'
-                        for (int i = 0; i < METADATA.modifiedDirs.size(); i++) {
-                            println "***INFO: unstash ${METADATA.modifiedDirs[i]}"
-                            if ( METADATA.modifiedDirs[i] == "web" && !METADATA.modifiedDirs.contains("editor")){
-                                unstash "editor-dist"
+                        script {
+                            METADATA.modifiedDirs.each { dir ->
+                                println "***INFO: unstash ${dir}"
+                                if (dir == "web" && !METADATA.modifiedDirs.contains("editor")) {
+                                    unstash "editor-dist"
+                                }
+                                if (dir == "editor" && !METADATA.modifiedDirs.contains("web")) {
+                                    unstash "web-dist"
+                                }
+                                unstash "${dir}-dist"
                             }
-                            if ( METADATA.modifiedDirs[i] == "editor" && !METADATA.modifiedDirs.contains("web")){
-                                unstash "web-dist"
-                            }
-                            unstash "${METADATA.modifiedDirs[i]}-dist"
                         }
                         sh 'ls -la'
                         // sh 'sleep 180'
