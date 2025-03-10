@@ -3,6 +3,7 @@ package org.docker
 
 def createWebDockerfile(String path, String buildEnv){
     sh """
+        cd Dockerfile/plaud-web/
         # 读取当前目录的Dockerfile内容
         dockerfile_content=\$(cat Dockerfile)
         

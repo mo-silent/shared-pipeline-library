@@ -104,6 +104,7 @@ def call(body) {
                             } else if (METADATA.branchName.startsWith('feature')) {
                                 buildEnv = 'qa'
                             }
+                            sh "ls -la"
                             // 创建并行任务列表
                             def parallelSteps = [:]
                             
@@ -123,7 +124,6 @@ def call(body) {
                             // 并行执行所有unstash任务
                             parallel parallelSteps
                         }
-                        sh 'ls -la'
                         // sh 'sleep 180'
                         // sh '/kaniko/executor --context `pwd` --dockerfile `pwd`/Dockerfile --destination 617482875210.dkr.ecr.us-east-1.amazonaws.com/java-demo:202310-02-amd64'
                     }
