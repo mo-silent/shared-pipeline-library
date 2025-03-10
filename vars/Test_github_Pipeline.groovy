@@ -112,8 +112,9 @@ def call(body) {
                                 buildEnv = 'uat'
                             } else if (METADATA.branchName.startsWith('feature')) {
                                 buildEnv = 'qa'
-                            }
+                            } 
                             sh "ls -la"
+                            unstash "stash-dist"
                             // 创建并行任务列表
                             def parallelSteps = [:]
                             def workDirs = []
@@ -121,24 +122,19 @@ def call(body) {
                                 // 为每个目录创建一个并行任务
                                 parallelSteps["Unstash-${dir}"] = {
                                     println "***INFO: unstash ${dir}"
-                                    // if (dir == "editor" && !METADATA.modifiedDirs.contains("web")) {
-                                    //     unstash "web-dist"
-                                    //     sh "ls -la web-dist/"
-                                    //     // dockerUtils.createWebDockerfile("web-dist", buildEnv)
-                                    //     workDirs << "web-dist"
-                                    // }
-                                    unstash "${dir}-dist"
+                                    
                                     // dockerUtils.createWebDockerfile(dir, buildEnv)
-                                    sh "ls -la"
-                                    workDirs << "${dir}-dist"
+                                    
+                                    workDirs << "${dir}"
                                 }
                             }
                             
                             // 并行执行所有unstash任务
                             parallel parallelSteps
-                            sh "cat Dockerfile/plaud-web/web-dist/Dockerfile"
+                            sh "ls -la Dockerfile/plaud-web/"
+                            sh "ls -la stash-dist/"
                             echo "workDirs: ${workDirs}"
-
+                            sh 'sleep 180'
                         }
                         // sh 'sleep 180'
                         // sh '/kaniko/executor --context `pwd` --dockerfile `pwd`/Dockerfile --destination 617482875210.dkr.ecr.us-east-1.amazonaws.com/java-demo:202310-02-amd64'

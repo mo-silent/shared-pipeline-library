@@ -60,6 +60,7 @@ def build(Map METADATA) {
             break
         case "yarn":
             println "***INFO: Yarn bulid."
+            sh "mkdir -p stash-dist"
             METADATA.modifiedDirs.each { dir ->
                 println "***INFO: Bulid branch ${dir}"
                 
@@ -67,14 +68,35 @@ def build(Map METADATA) {
                     export PATH=$PATH:/root/.nvm/versions/node/v23.9.0/bin
                     yarn install
                 '''
-                // 在多行字符串中无法直接使用Groovy变量，需要使用双引号并转义
-                sh "export PATH=\$PATH:/root/.nvm/versions/node/v23.9.0/bin && yarn build --scope ${dir}"
-                // if ( dir == "editor" && !METADATA.modifiedDirs.contains("web")){
-                //     sh "export PATH=\$PATH:/root/.nvm/versions/node/v23.9.0/bin && yarn build --scope web"
-                //     stash includes: "web/dist/**", name: "web-dist"
-                // }
-                stash includes: "${dir}/dist/**", name: "${dir}-dist"
+                sh """
+                    cd ${dir}
+                    # 读取当前目录下的package.json
+                    if [ -f package.json ]; then
+                        name=\$(grep -o '"name"\\s*:\\s*"[^"]*"' package.json | sed 's/"name"\\s*:\\s*"\\(.*\\)"/\\1/')
+                        pipeline=\$(grep -o '"pipeline"\\s*:\\s*"[^"]*"' package.json | sed 's/"pipeline"\\s*:\\s*"\\(.*\\)"/\\1/')
+                        pipeline=\${pipeline:-""}
+                        
+                        # 创建发布路径并移除所有点号
+                        publish_path="/\${name}\${pipeline}/"
+                        publish_path=\$(echo \$publish_path | sed 's/\\.//g')
+                        
+                        # 更新 package.json 中的 name 和 publicPath
+                        sed -i "s/\"name\":[^,]*/\"name\": \"${publish_path//\//\\/}\"/" package.json
+                        if grep -q "\"publicPath\":" package.json; then
+                            sed -i "s/\"publicPath\":[^,]*/\"publicPath\": \"${publish_path//\//\\/}\"/" package.json
+                        fi
+                    fi
+                    export PATH=\$PATH:/root/.nvm/versions/node/v23.9.0/bin && yarn build
+                    cat package.json
+                """
+                // sh "export PATH=\$PATH:/root/.nvm/versions/node/v23.9.0/bin && yarn build --scope ${dir}"
+                sh """
+                    mkdir -p stash-dist/${dir}
+                    mv ${dir}/dist/* stash-dist/${dir}
+                """
+                
             }
+            stash includes: "stash-dist/**", name: "stash-dist", allowEmpty: true, useDefaultExcludes: false
             break
         default:
             echo "***ERROR: Not support BUILD_TYPE, exit.."
