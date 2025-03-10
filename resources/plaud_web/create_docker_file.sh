@@ -2,8 +2,9 @@
 
 repo_dir=$1
 path=$2
+group_name=$3
 # 检查必要的参数是否存在
-if [ -z "$repo_dir" ] || [ -z "$path" ]; then
+if [ -z "$repo_dir" ] || [ -z "$path" ] || [ -z "$group_name" ]; then
     echo "错误: 缺少必要的参数 repo_dir 或 path"
     exit 1
 fi
@@ -32,7 +33,7 @@ echo "***INFO: The dir_path is ${dir_path}"
 mkdir -p "${dir_path}/docker-data/${path}"
 
 # 切换到Dockerfile目录并复制nginx模板
-cd Dockerfile/plaud-web/ || exit 1
+cd "Dockerfile/${group_name}/" || exit 1
 cp nginx.template "${dir_path}/docker-data/${path}/nginx.template"
 
 # 根据path参数选择不同的Dockerfile模板

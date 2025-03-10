@@ -132,7 +132,6 @@ def call(body) {
                             unstash "plaud-web-dist"
                             unstash "docker-data-dist"
                             sh "ls -la"
-                            sh 'sleep 180'
                             // def parallelSteps = [:]
                             METADATA.modifiedDirs.each { dir ->
                                 // parallelSteps["create-dockerfile-${dir}"] = {
@@ -142,6 +141,7 @@ def call(body) {
                                 // }
                             }
                             // parallel parallelSteps
+                            sh 'sleep 180'
                         }
                         
                         // sh 'sleep 180'
