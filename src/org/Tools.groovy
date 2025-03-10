@@ -72,10 +72,9 @@ def build(Map METADATA) {
                 writeFile text: modify_package_json, file: "./${dir}/modify_package_json.sh", encoding: "UTF-8"
                 sh """
                     cd ${dir}
-                    # 读取当前目录下的package.json
-                    apt install jq -y
                     bash modify_package_json.sh
                     export PATH=\$PATH:/root/.nvm/versions/node/v23.9.0/bin && yarn build
+                    # 读取当前目录下的package.json
                     cat package.json
                 """
                 // sh "export PATH=\$PATH:/root/.nvm/versions/node/v23.9.0/bin && yarn build --scope ${dir}"
