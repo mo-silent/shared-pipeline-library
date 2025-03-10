@@ -107,7 +107,7 @@ def call(body) {
                             }
                         }
                         parallel parallelSteps
-                        stash includes: "./data/**", name: "data-dist", allowEmpty: true, useDefaultExcludes: false
+                        stash includes: "./Dockerfile/data/**", name: "data-dist", allowEmpty: true, useDefaultExcludes: false
                     }
                 }
             }
