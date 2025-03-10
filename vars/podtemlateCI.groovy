@@ -22,12 +22,12 @@ spec:
     - name: "JENKINS_AGENT_WORKDIR"
       value: "/tmp"
     imagePullPolicy: Always
-  tolerations:
-  - effect: NoSchedule
-    key: devops-spot
-    operator: Equal
-  nodeSelector:
-    app: devops
+  // tolerations:
+  // - effect: NoSchedule
+  //   key: devops-spot
+  //   operator: Equal
+  // nodeSelector:
+  //   app: devops
   volumes:
   - hostPath:
       path: "/var/run/docker.sock"
