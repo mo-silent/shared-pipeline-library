@@ -62,28 +62,37 @@ def build(Map METADATA) {
             println "***INFO: Yarn bulid."
             sh "mkdir -p plaud-web-dist"
             def modify_package_json = libraryResource 'plaud_web/modify_package_json.sh'
+            sh '''
+                set +x
+                export PATH=$PATH:/root/.nvm/versions/node/v23.9.0/bin
+                yarn install
+            '''
+            // 创建并行任务列表
+            def parallelBuilds = [:]
+            
             METADATA.modifiedDirs.each { dir ->
-                println "***INFO: Bulid branch ${dir}"
+                // 为每个目录创建一个闭包任务
+                parallelBuilds["build-${dir}"] = {
+                    println "***INFO: Bulid branch ${dir}"
                 
-                sh '''
-                    set +x
-                    export PATH=$PATH:/root/.nvm/versions/node/v23.9.0/bin
-                    yarn install
-                '''
-                writeFile text: modify_package_json, file: "./${dir}/modify_package_json.sh", encoding: "UTF-8"
-                sh """
-                    set +x
-                    cd ${dir}
-                    bash modify_package_json.sh
-                    export PATH=\$PATH:/root/.nvm/versions/node/v23.9.0/bin && yarn build
-                    # 读取当前目录下的package.json
-                    cat package.json
-                """
-                sh """
-                    mkdir -p plaud-web-dist/${dir}
-                    mv ${dir}/dist/* plaud-web-dist/${dir}
-                """
+                    writeFile text: modify_package_json, file: "./${dir}/modify_package_json.sh", encoding: "UTF-8"
+                    sh """
+                        set +x
+                        cd ${dir}
+                        bash modify_package_json.sh
+                        export PATH=\$PATH:/root/.nvm/versions/node/v23.9.0/bin && yarn build
+                        # 读取当前目录下的package.json
+                        cat package.json
+                    """
+                    sh """
+                        mkdir -p plaud-web-dist/${dir}
+                        mv ${dir}/dist/* plaud-web-dist/${dir}
+                    """
+                }
             }
+            
+            // 并行执行所有构建任务
+            parallel parallelBuilds
             // sh "echo 'test' > plaud-web-dist/test.txt"
             stash includes: "plaud-web-dist/**", name: "plaud-web-dist", allowEmpty: true, useDefaultExcludes: false
             break
