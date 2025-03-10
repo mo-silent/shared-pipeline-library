@@ -31,14 +31,11 @@ def call(body) {
             stage("get_evn") {
                 steps {
                     script {
-                        def branchName = scm.branches[0].name
-                        if (branchName.contains("*/")) {
-                            branchName = branchName.split("\\*/")[1]
-                        }
+                        def branchName = env.ref.replaceFirst('refs/heads/', '')
                         echo "分支名称: ${branchName}"
                         METADATA.put("branchName", branchName)
                         
-                        def changedFiles = getChangedFiles()
+                        def changedFiles = env.modified
                         def modifiedDirs = changedFiles.collect { it.split('/')[0] }.unique()
                         echo "修改的一级目录: ${modifiedDirs}"
                         METADATA.put("modifiedDirs", modifiedDirs)
@@ -54,7 +51,6 @@ def call(body) {
                             tools.build(METADATA)
                         }
                     }
-                    
                 }
             }
             stage("Create ECR Repository") {
@@ -103,18 +99,5 @@ def call(body) {
             }
         }
     }
-}
-
-@NonCPS
-def getChangedFiles() {
-    def changedFiles = []
-    for (changeLogSet in currentBuild.changeSets) {
-        for (entry in changeLogSet.items) {
-            for (file in entry.affectedFiles) {
-                changedFiles.add(file.path)
-            }
-        }
-    }
-    return changedFiles
 }
 

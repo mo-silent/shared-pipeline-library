@@ -75,3 +75,16 @@ def build(Map METADATA) {
             sh "exit 1"
       }
 }
+
+@NonCPS
+def getChangedFiles() {
+    def changedFiles = []
+    for (changeLogSet in currentBuild.changeSets) {
+        for (entry in changeLogSet.items) {
+            for (file in entry.affectedFiles) {
+                changedFiles.add(file.path)
+            }
+        }
+    }
+    return changedFiles
+}
