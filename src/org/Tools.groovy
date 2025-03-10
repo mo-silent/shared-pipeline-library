@@ -29,16 +29,6 @@ def checkoutSource( String repoUrl, String branch, String gitCredentialsId ){
         ])
         return repo_dir
     }
-    // Map scmVars = checkout([
-    //     $class: 'GitSCM',
-    //     userRemoteConfigs: [[url: repoUrl, credentialsId: gitCredentialsId]],
-    //     branches: [[name: branch]],
-    //     extensions: [[$class: 'CheckoutOption', timeout: 30], [$class: 'CleanBeforeCheckout', deleteUntrackedNestedRepositories: true]],
-    //     submoduleCfg: [],
-    //     doGenerateSubmoduleConfigurations: false
-    //     ])
-    
-
     
 }
 
