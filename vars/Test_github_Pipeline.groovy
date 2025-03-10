@@ -35,8 +35,11 @@ def call(body) {
                         echo "分支名称: ${branchName}"
                         METADATA.put("branchName", branchName)
                         
-                        def changedFiles = env.modified
-                        def modifiedDirs = changedFiles.collect { it.split('/')[0] }.unique()
+                        // def changedFiles = env.modified
+                        def modifiedDirs = env.commits*.modified.flatten()
+                                                .findAll { it.contains('/') }
+                                                .collect { it.substring(0, it.indexOf('/')) }
+                                                .unique()
                         echo "修改的一级目录: ${modifiedDirs}"
                         METADATA.put("modifiedDirs", modifiedDirs)
                     }
