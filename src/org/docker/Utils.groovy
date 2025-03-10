@@ -6,3 +6,7 @@ def createWebDockerfile(String path, Map METADATA){
     writeFile text: create_docker_file, file: "./create_docker_file.sh", encoding: "UTF-8"
     sh "bash ./create_docker_file.sh ${METADATA.repo_dir} ${path}"
 }
+
+def kanikoPush(String tags){
+    sh '/kaniko/executor --context `pwd` --dockerfile `pwd`/Dockerfile --destination 617482875210.dkr.ecr.us-east-1.amazonaws.com/${tags}'
+}

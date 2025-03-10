@@ -133,7 +133,17 @@ def call(body) {
                             unstash "docker-data-dist"
                             sh "ls -la"
                             sh 'sleep 180'
+                            // def parallelSteps = [:]
+                            METADATA.modifiedDirs.each { dir ->
+                                // parallelSteps["create-dockerfile-${dir}"] = {
+                                def tags = "${env.DOCKER_REGISTRY_HOST_TOKYO}/${METADATA.GROUP_NAME}/${dir}:${METADATA.BUILD_TAG}"
+                                echo "tags: ${tags}"
+                                // dockerUtils.kanikoPush(tags)
+                                // }
+                            }
+                            // parallel parallelSteps
                         }
+                        
                         // sh 'sleep 180'
                         // sh '/kaniko/executor --context `pwd` --dockerfile `pwd`/Dockerfile --destination 617482875210.dkr.ecr.us-east-1.amazonaws.com/java-demo:202310-02-amd64'
                     }
