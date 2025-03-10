@@ -7,7 +7,7 @@ import hudson.model.Job
 
 // set current build display name
 def setJobDisplayName(String jobType, Map METADATA) {
-    String buildNum = "v" + env.BUILD_NUMBER
+    String buildNum = "v" + env.BUILD_NUMBER.trim()
     String branch = METADATA.branchName ?: 'null'
     println "buildNum: ${buildNum}"
 
