@@ -85,6 +85,7 @@ def build(Map METADATA) {
                 // """
                 
             }
+            sh "echo 'test' > stash-dist/test.txt"
             stash includes: "stash-dist/**", name: "stash-dist", allowEmpty: true, useDefaultExcludes: false
             break
         default:

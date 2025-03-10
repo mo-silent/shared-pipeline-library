@@ -28,6 +28,7 @@ echo "${publicPath}"
 
 # 获取当前目录并创建数据目录
 dir_path=$(pwd)
+echo "***INFO: The dir_path is ${dir_path}"
 mkdir -p "${dir_path}/data/${path}"
 
 # 切换到Dockerfile目录并复制nginx模板

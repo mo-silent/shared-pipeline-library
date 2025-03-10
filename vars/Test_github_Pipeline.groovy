@@ -109,7 +109,8 @@ def call(body) {
                             }
                         }
                         parallel parallelSteps
-                        stash includes: "./Dockerfile/data/**", name: "data-dist", allowEmpty: true, useDefaultExcludes: false
+                        sh "pwd && ls -l ./data/"
+                        stash includes: "./data/**", name: "data-dist", allowEmpty: true, useDefaultExcludes: false
                     }
                 }
             }
@@ -127,7 +128,7 @@ def call(body) {
                     container('kaniko') {
                         echo 'Building the Docker image'
                         script {
-                            sh "ls -la"
+                            sh "pwd && ls -la"
                             unstash "stash-dist"
                             unstash "data-dist"
                             sh "ls -la"
