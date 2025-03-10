@@ -80,19 +80,6 @@ def call(body) {
                     }
                 }
             }
-            stage("Create ECR Repository") {
-                when {
-                    equals expected: "true",
-                    actual: METADATA.IS_DOCKER
-                }
-                steps {
-                    script{
-                        // sh "sleep 180"
-                        String region = env.DOCKER_REGISTRY_HOST_TOKYO.tokenize('.')[-3].toLowerCase()
-                        ECR.createRepository(region, METADATA.GROUP_NAME, null)
-                    }
-                }
-            }
             stage("Create Docker Files") {
                 when {
                     equals expected: "true",
@@ -111,6 +98,22 @@ def call(body) {
                         parallel parallelSteps
                         sh "pwd && ls -la"
                         stash includes: "docker-data/**", name: "docker-data-dist", allowEmpty: true, useDefaultExcludes: false
+                    }
+                }
+            }
+            stage("Create ECR Repository") {
+                when {
+                    equals expected: "true",
+                    actual: METADATA.IS_DOCKER
+                }
+                steps {
+                    script{
+                        METADATA.modifiedDirs.each { dir ->
+                            echo "dir: ${dir}"
+                            String region = env.DOCKER_REGISTRY_HOST_TOKYO.tokenize('.')[-3].toLowerCase()
+                            def repoName = "${METADATA.GROUP_NAME}/${dir}"
+                            ECR.createRepository(region, repoName, null)
+                        }
                     }
                 }
             }
@@ -137,11 +140,11 @@ def call(body) {
                                 // parallelSteps["create-dockerfile-${dir}"] = {
                                 def tags = "${env.DOCKER_REGISTRY_HOST_TOKYO}/${METADATA.GROUP_NAME}/${dir}:${METADATA.BUILD_TAG}"
                                 echo "tags: ${tags}"
-                                // dockerUtils.kanikoPush(tags)
+                                dockerUtils.kanikoPush(tags)
                                 // }
                             }
                             // parallel parallelSteps
-                            sh 'sleep 180'
+                            // sh 'sleep 180'
                         }
                         
                         // sh 'sleep 180'

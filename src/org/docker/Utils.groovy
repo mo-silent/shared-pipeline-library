@@ -8,5 +8,5 @@ def createWebDockerfile(String path, Map METADATA){
 }
 
 def kanikoPush(String tags){
-    sh '/kaniko/executor --context `pwd` --dockerfile `pwd`/Dockerfile --destination 617482875210.dkr.ecr.us-east-1.amazonaws.com/${tags}'
+    sh "/kaniko/executor --context `pwd` --dockerfile `pwd`/Dockerfile --destination ${tags}"
 }
