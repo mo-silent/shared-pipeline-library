@@ -23,10 +23,6 @@ def call(body) {
                 yaml podtemlateCI()
             }
         }
-        options {
-            timestamps()                // Console open time display
-            ansiColor('xterm')          // console add color support
-        }
         environment {
             DOCKER_REGISTRY_HOST_TOKYO = "329599658616.dkr.ecr.us-west-2.amazonaws.com"
             ROLE_ARN = "arn:aws:iam::329599658616:role/jenkins_slave"
