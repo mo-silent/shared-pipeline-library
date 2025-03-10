@@ -61,6 +61,8 @@ def build(Map METADATA) {
         case "yarn":
             println "***INFO: Yarn bulid."
             sh "mkdir -p stash-dist"
+            def modify_package_json = libraryResource 'plaud_web/modify_package_json.sh'
+            writeFile text: modify_package_json, file: "./modify_package_json.sh", encoding: "UTF-8"
             METADATA.modifiedDirs.each { dir ->
                 println "***INFO: Bulid branch ${dir}"
                 
@@ -71,21 +73,7 @@ def build(Map METADATA) {
                 sh """
                     cd ${dir}
                     # 读取当前目录下的package.json
-                    if [ -f package.json ]; then
-                        name=\$(grep -o '"name"\\s*:\\s*"[^"]*"' package.json | sed 's/"name"\\s*:\\s*"\\(.*\\)"/\\1/')
-                        pipeline=\$(grep -o '"pipeline"\\s*:\\s*"[^"]*"' package.json | sed 's/"pipeline"\\s*:\\s*"\\(.*\\)"/\\1/')
-                        pipeline=\${pipeline:-""}
-                        
-                        # 创建发布路径并移除所有点号
-                        publish_path="/\${name}\${pipeline}/"
-                        publish_path=\$(echo \$publish_path | sed 's/\\.//g')
-                        
-                        # 更新 package.json 中的 name 和 publicPath
-                        sed -i "s/\"name\":[^,]*/\"name\": \"${publish_path//\//\\/}\"/" package.json
-                        if grep -q "\"publicPath\":" package.json; then
-                            sed -i "s/\"publicPath\":[^,]*/\"publicPath\": \"${publish_path//\//\\/}\"/" package.json
-                        fi
-                    fi
+                    bash modify_package_json.sh
                     export PATH=\$PATH:/root/.nvm/versions/node/v23.9.0/bin && yarn build
                     cat package.json
                 """
