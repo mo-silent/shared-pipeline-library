@@ -51,11 +51,24 @@ def build(Map METADATA) {
             break
         case "yarn":
             println "***INFO: Yarn bulid."
-            sh '''
-                export PATH=$PATH:/root/.nvm/versions/node/v23.9.0/bin
-                yarn install
-            '''
-            sh "export PATH=$PATH:/root/.nvm/versions/node/v23.9.0/bin && yarn build --scope web"
+            for (int i = 0; i < METADATA.modifiedDirs.size(); i++) {
+                println "***INFO: Bulid branch ${METADATA.modifiedDirs[i]}"
+                
+                sh '''
+                    export PATH=$PATH:/root/.nvm/versions/node/v23.9.0/bin
+                    yarn install
+                '''
+                sh "/root/.nvm/versions/node/v23.9.0/bin/yarn build --scope ${METADATA.modifiedDirs[i]}"
+                if ( METADATA.modifiedDirs[i] == "web" && !METADATA.modifiedDirs.contains("editor")){
+                    sh "/root/.nvm/versions/node/v23.9.0/bin/yarn build --scope editor"
+                    stash includes: "editor/dist/**", name: "editor-dist"
+                }
+                if ( METADATA.modifiedDirs[i] == "editor" && !METADATA.modifiedDirs.contains("web")){
+                    sh "/root/.nvm/versions/node/v23.9.0/bin/yarn build --scope web"
+                    stash includes: "web/dist/**", name: "web-dist"
+                }
+                stash includes: "${METADATA.modifiedDirs[i]}/dist/**", name: "${METADATA.modifiedDirs[i]}-dist"
+            }
             break
         default:
             echo "***ERROR：Not support BUILD_TYPE, exit.."

@@ -48,11 +48,10 @@ def call(body) {
             stage("Build_Src") {
                 steps {
                     script{
-                        repo_dir = tools.checkoutSource(METADATA.GIT_REPO, "release", env.GIT_CREDENTIAL_ID)
+                        repo_dir = tools.checkoutSource(METADATA.GIT_REPO, METADATA.branchName, env.GIT_CREDENTIAL_ID)
                         dir(repo_dir) {
                             sh "pwd && ls -l"
                             tools.build(METADATA)
-                            stash includes: 'web/dist/**', name: 'web-dist'
                         }
                     }
                     
@@ -84,7 +83,16 @@ def call(body) {
                 steps {
                     container('kaniko') {
                         echo 'Building the Docker image'
-                        unstash 'web-dist'
+                        for (int i = 0; i < METADATA.modifiedDirs.size(); i++) {
+                            println "***INFO: unstash ${METADATA.modifiedDirs[i]}"
+                            if ( METADATA.modifiedDirs[i] == "web" && !METADATA.modifiedDirs.contains("editor")){
+                                unstash "editor-dist"
+                            }
+                            if ( METADATA.modifiedDirs[i] == "editor" && !METADATA.modifiedDirs.contains("web")){
+                                unstash "web-dist"
+                            }
+                            unstash "${METADATA.modifiedDirs[i]}-dist"
+                        }
                         sh 'ls -la'
                         // sh 'sleep 180'
                         // sh '/kaniko/executor --context `pwd` --dockerfile `pwd`/Dockerfile --destination 617482875210.dkr.ecr.us-east-1.amazonaws.com/java-demo:202310-02-amd64'
