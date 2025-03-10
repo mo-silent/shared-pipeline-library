@@ -109,8 +109,8 @@ def call(body) {
                             }
                         }
                         parallel parallelSteps
-                        sh "pwd && ls -l ./data/"
-                        stash includes: "./data/**", name: "data-dist", allowEmpty: true, useDefaultExcludes: false
+                        sh "pwd && ls -la"
+                        stash includes: "docker-data/**", name: "data-dist", allowEmpty: true, useDefaultExcludes: false
                     }
                 }
             }

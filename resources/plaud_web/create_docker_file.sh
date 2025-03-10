@@ -29,11 +29,11 @@ echo "${publicPath}"
 # 获取当前目录并创建数据目录
 dir_path=$(pwd)
 echo "***INFO: The dir_path is ${dir_path}"
-mkdir -p "${dir_path}/data/${path}"
+mkdir -p "${dir_path}/docker-data/${path}"
 
 # 切换到Dockerfile目录并复制nginx模板
 cd Dockerfile/plaud-web/ || exit 1
-cp nginx.template "${dir_path}/data/${path}/nginx.template"
+cp nginx.template "${dir_path}/docker-data/${path}/nginx.template"
 
 # 根据path参数选择不同的Dockerfile模板
 if [ "${path}" = "editor" ]; then
@@ -43,4 +43,4 @@ else
 fi
 
 # 替换Dockerfile中的变量并创建新的Dockerfile
-echo "${dockerfile_content}" | sed -e "s/\$path/${publicPath}/g" > "${dir_path}/data/${path}/Dockerfile"
+echo "${dockerfile_content}" | sed -e "s/\$path/${publicPath}/g" > "${dir_path}/docker-data/${path}/Dockerfile"
