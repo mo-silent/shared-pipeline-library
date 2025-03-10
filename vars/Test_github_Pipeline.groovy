@@ -63,6 +63,7 @@ def call(body) {
 
                         echo "修改的一级目录: ${modifiedDirs}"
                         echo "BUILD_TAG: ${BUILD_TAG}"
+                        sh 'exit 1'
                     }
                 }
             }
@@ -132,7 +133,7 @@ def call(body) {
                             
                             // 并行执行所有unstash任务
                             parallel parallelSteps
-
+                            sh "cat Dockerfile/plaud-web/web-dist/Dockerfile"
                             echo "workDirs: ${workDirs}"
 
                         }
