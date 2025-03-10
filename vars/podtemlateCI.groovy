@@ -22,6 +22,13 @@ spec:
     - name: "JENKINS_AGENT_WORKDIR"
       value: "/tmp"
     imagePullPolicy: Always
+    resources:
+      limits:
+        cpu: 4
+        memory: 8Gi
+      requests:
+        cpu: 2
+        memory: 4Gi
   // tolerations:
   // - effect: NoSchedule
   //   key: devops-spot
