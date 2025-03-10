@@ -6,7 +6,8 @@ def createWebDockerfile(String path, Map METADATA){
         ls -la ${METADATA.repo_dir}/
         echo "***INFO: The path is ${METADATA.repo_dir}/${path}"
         // 读取package.json中的name字段作为publicPath
-        publicPath=\$(cat ${METADATA.repo_dir}/${path}/package.json | grep "name" | cut -d'"' -f4)
+        // 使用jq命令安全地解析package.json并获取name字段
+        publicPath=\$(jq -r '.name' ${METADATA.repo_dir}/${path}/package.json)
         echo "\${publicPath}" 
 
         cd Dockerfile/plaud-web/
